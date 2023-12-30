@@ -1,0 +1,12 @@
+{
+    "gopls": {
+        "ui.semanticTokens": true,
+        "formatting.local": "github.com/azrod/golink",
+    },
+    "go.lintTool": "golangci-lint",
+    "go.lintFlags": [
+        "--fast",
+        "--fix"
+    ],
+    "go.lintOnSave": "package"
+}
