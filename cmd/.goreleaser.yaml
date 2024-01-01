@@ -1,6 +1,6 @@
 version: 1
 
-project_name: golinkctl
+project_name: glctl
 
 # before:
 #   hooks:

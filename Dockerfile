@@ -8,7 +8,7 @@ RUN yarn install --frozen-lockfile
 
 RUN yarn build
 
-FROM scratch
+FROM alpine
 
 ENV GID 1000
 ENV UID 1000

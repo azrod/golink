@@ -108,7 +108,7 @@ func (h *v1) getNamespace(c echo.Context) error {
 // @Tags namespaces
 // @Accept  json
 // @Produce  json
-// @Param Namespace body models.Namespace true "Namespace"
+// @Param Namespace body models.NamespaceRequest true "Namespace"
 // @Success 200 {object} models.APIResponse{data=models.Namespace}
 // @failure 500 {object} models.APIResponseError{error=models.APIResponseError500}
 // @failure 400 {object} models.APIResponseError{error=models.APIResponseError400}
@@ -116,7 +116,7 @@ func (h *v1) getNamespace(c echo.Context) error {
 // @failure 409 {object} models.APIResponseError{error=models.APIResponseError409}
 // @Router /namespace [post].
 func (h *v1) createNamespace(c echo.Context) error {
-	var ns models.Namespace
+	var ns models.NamespaceRequest
 	if err := c.Bind(&ns); err != nil {
 		return c.JSON(http.StatusBadRequest, model.NewAPIResponseError(
 			c,
@@ -139,7 +139,8 @@ func (h *v1) createNamespace(c echo.Context) error {
 		))
 	}
 
-	if err := h.DB.CreateNamespace(c.Request().Context(), ns); err != nil {
+	nsCreated, err := h.DB.CreateNamespace(c.Request().Context(), ns)
+	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNotFound):
 			return c.JSON(http.StatusNotFound, model.NewAPIResponseError(
@@ -183,7 +184,7 @@ func (h *v1) createNamespace(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.NewAPIResponse[models.Namespace](
 		c,
 		"namespace.create",
-		ns,
+		nsCreated,
 	))
 }
 

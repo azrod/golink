@@ -5,63 +5,66 @@
       :style="`background-color:${item.background};`"
       :class="item.class"
     >
-      <a :href="item.url" :target="item.target" rel="noreferrer">
-        <div class="card-content">
-          <div :class="mediaClass">
-            <slot name="icon">
-              <div v-if="item.logo" class="media-left">
-                <figure class="image is-48x48">
-                  <img :src="item.logo" :alt="`${item.name} logo`" />
-                </figure>
-              </div>
-              <div v-if="item.icon" class="media-left">
-                <figure class="image is-48x48">
-                  <i style="font-size: 35px" :class="['fa-fw', item.icon]"></i>
-                </figure>
-              </div>
-            </slot>
-            <div class="media-content">
-              <slot name="content">
-                <p class="title is-4">{{ item.name }}</p>
-                <p class="subtitle is-6" v-if="item.subtitle">
-                  {{ item.subtitle }}
-                </p>
-              </slot>
+      <div class="card-content">
+        <div :class="mediaClass">
+          <slot name="icon">
+            <div v-if="item.logo" class="media-left">
+              <figure class="image is-48x48">
+                <img :src="item.logo" :alt="`${item.name} logo`" />
+              </figure>
             </div>
-            <slot name="indicator" class="indicator"></slot>
+            <div v-if="item.icon" class="media-left">
+              <figure class="image is-48x48">
+                <i style="font-size: 35px" :class="['fa-fw', item.icon]"></i>
+              </figure>
+            </div>
+          </slot>
+          <div class="media-content">
+            <slot name="content">
+              <p class="title is-4">
+                <a :href="item.url" :target="item.target" rel="noreferrer">
+                  {{ item.name }}
+                </a>
+              </p>
+              <p class="subtitle is-6" v-if="item.subtitle">
+                {{ item.subtitle }}
+              </p>
+            </slot>
           </div>
-          <div class="tag" :class="item.tagstyle" v-if="item.tag">
-            <strong class="tag-text">#{{ item.tag }}</strong>
-          </div>
+          <slot name="indicator" class="indicator"></slot>
         </div>
-      </a>
+        <div class="tag" :class="item.tagstyle" v-if="item.tag">
+          <strong class="tag-text">#{{ item.tag }}</strong>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
-    name: "Generic",
-    props: {
-        item: Object,
+  name: "Generic",
+  props: {
+    item: Object,
+  },
+  computed: {
+    mediaClass: function () {
+      return { media: true, "no-subtitle": !this.item.subtitle };
     },
-    computed: {
-        mediaClass: function () {
-            return { media: true, "no-subtitle": !this.item.subtitle };
-        },
-    },
+  },
 };
 </script>
-  
+
 <style scoped lang="scss">
 .media-left {
-    .image {
-        display: flex;
-        align-items: center;
-    }
+  .image {
+    display: flex;
+    align-items: center;
+  }
 
-    img {
-        max-height: 100%;
-        object-fit: contain;
-    }
+  img {
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 </style>

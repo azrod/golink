@@ -58,18 +58,27 @@ func (c Client) DeleteNamespace(ctx context.Context, namespace string) error {
 }
 
 // CreateNamespace creates a Namespace in the database.
-func (c Client) CreateNamespace(ctx context.Context, namespace models.Namespace) error {
-	b, err := namespace.MarshalJSON()
+func (c Client) CreateNamespace(ctx context.Context, namespace models.NamespaceRequest) (models.Namespace, error) {
+	ns := models.Namespace{
+		NamespaceRequest: namespace,
+		Enabled:          models.Enabled(true),
+	}
+
+	b, err := ns.MarshalJSON()
 	if err != nil {
-		return err
+		return models.Namespace{}, err
 	}
 
 	// Check if namespace already exists
 	if _, err := c.GetNamespace(ctx, namespace.Name); err == nil {
-		return fmt.Errorf("namespace %s already exists", namespace.Name)
+		return models.Namespace{}, fmt.Errorf("namespace %s already exists", namespace.Name)
 	}
 
-	return c.c.Set(ctx, NamespaceKey+namespace.Name, string(b), 0).Err()
+	if err := c.c.Set(ctx, NamespaceKey+namespace.Name, string(b), 0).Err(); err != nil {
+		return models.Namespace{}, err
+	}
+
+	return c.GetNamespace(ctx, namespace.Name)
 }
 
 // ListNamespaces lists all Namespaces in the database.

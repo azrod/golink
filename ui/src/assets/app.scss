@@ -13,7 +13,10 @@
   text-overflow: ellipsis;
 }
 
-html, body, body #app-mount, body #app {
+html,
+body,
+body #app-mount,
+body #app {
   height: 100%;
   background-color: var(--background);
 }
@@ -32,6 +35,7 @@ body {
 
     a {
       color: var(--link);
+
       &:hover {
         color: var(--link-hover);
       }
@@ -40,6 +44,7 @@ body {
     .title {
       color: var(--text-title);
     }
+
     .subtitle {
       color: var(--text-subtitle);
     }
@@ -47,6 +52,7 @@ body {
     .card {
       background-color: var(--card-background);
       box-shadow: 0 2px 15px 0 var(--card-shadow);
+
       &:hover {
         background-color: var(--card-background);
       }
@@ -54,6 +60,7 @@ body {
 
     .message {
       background-color: var(--card-background);
+
       .message-body {
         color: var(--text);
       }
@@ -132,6 +139,7 @@ body {
 
       .logo {
         float: left;
+
         i {
           vertical-align: top;
           padding: 8px 15px;
@@ -145,22 +153,26 @@ body {
         }
       }
     }
+
     .navbar {
       background-color: var(--highlight-secondary);
 
       a {
         color: var(--text-header);
         padding: 8px 12px;
+
         &:hover,
         &:focus {
           color: var(--text-header);
           background-color: var(--highlight-hover);
         }
       }
-	.navbar-menu {
-      background-color: inherit;
+
+      .navbar-menu {
+        background-color: inherit;
       }
     }
+
     .navbar-end {
       text-align: right;
     }
@@ -238,10 +250,16 @@ body {
     a {
       outline: none;
     }
+
+    .media-left {
+      .fa-fw {
+        color: var(--link);
+      }
+    }
   }
 
   .card:hover {
-    transform: translate(0, -3px);
+    // transform: translate(0, -3px);
 
     .tag {
       width: auto;
@@ -250,6 +268,18 @@ body {
 
       .tag-text {
         display: block;
+      }
+    }
+
+    .media-left {
+
+      .image {
+        transform: scale(1.1);
+        transition: all 0.2s ease-out;
+      }
+
+      .fa-fw {
+        color: var(--link-hover);
       }
     }
   }
@@ -300,13 +330,14 @@ body {
   .search-bar {
     position: relative;
     display: inline-block;
+
     input {
       border: none;
       background-color: var(--highlight-hover);
       border-radius: 5px;
       margin-top: 2px;
       padding: 2px 12px 2px 30px;
-      transition: all 100ms linear;
+      transition: all 0.8s ease-in-out;
       color: #ffffff;
       height: 30px;
       width: 100px;

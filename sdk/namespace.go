@@ -68,7 +68,7 @@ func (c Client) CreateNamespace(ctx context.Context, namespace string) (ns model
 		SetContext(ctx).
 		SetResult(models.APIResponse[models.Namespace]{}).
 		SetError(models.APIResponseError[models.APIResponseError400]{}).
-		SetBody(models.Namespace{Name: namespace}).
+		SetBody(models.NamespaceRequest{Name: namespace}).
 		Post("/namespace")
 	if err != nil {
 		return models.Namespace{}, err

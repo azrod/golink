@@ -9,10 +9,13 @@ import (
 var _ model = (*Namespace)(nil)
 
 type (
-	// Namespace is the model for the namespace.
-	Namespace struct {
+	NamespaceRequest struct {
 		// Name is the name of the namespace
 		Name string `json:"name"`
+	}
+	// Namespace is the model for the namespace.
+	Namespace struct {
+		NamespaceRequest
 
 		// Links is the list of links associated with the namespace
 		Links []Link `json:"links"`
@@ -41,8 +44,8 @@ func (g *Namespace) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Validate validates the namespace.
-func (g *Namespace) Validate() error {
+// Validate validates the namespace request.
+func (g *NamespaceRequest) Validate() error {
 	// Check if Name is empty
 	if g.Name == "" {
 		return fmt.Errorf("Validate: The namespace name %s is %w", g.Name, ErrIsEmpty)
@@ -50,6 +53,15 @@ func (g *Namespace) Validate() error {
 
 	// Set Name to lowercase
 	g.Name = strings.ToLower(g.Name)
+
+	return nil
+}
+
+// Validate validates the namespace.
+func (g *Namespace) Validate() error {
+	if err := g.NamespaceRequest.Validate(); err != nil {
+		return err
+	}
 
 	g.Enabled = Enabled(true)
 

@@ -7,43 +7,25 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
     goos:
+      - freebsd
+      - windows
       - linux
       - darwin
     goarch:
     - amd64
+    - '386'
+    - arm
     - arm64
-
-archives:
-  - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of uname.
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
-
-release:
-  github:
-    owner: azrod
-    name: golink
-  draft: false
 
 dockers:
   - image_templates:
-    - "ghcr.io/azrod/{{.ProjectName}}:{{ .Version }}-amd64"
+    - "ghcr.io/azrod/{{.ProjectName}}:v{{ .Version }}-amd64"
     extra_files:
       - ui/
     dockerfile: Dockerfile
@@ -58,7 +40,7 @@ dockers:
     - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
   - image_templates: 
-    - "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+    - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-arm64v8"
     extra_files:
       - ui/
     goarch: arm64
@@ -74,11 +56,11 @@ dockers:
     - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
 docker_manifests:
-- name_template: "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}"
+- name_template: "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}"
   image_templates:
-  - "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}-amd64"
-  - "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+  - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-amd64"
+  - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-arm64v8"
 - name_template: "ghcr.io/azrod/{{ .ProjectName }}:latest"
   image_templates:
-  - "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}-amd64"
-  - "ghcr.io/azrod/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+  - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-amd64"
+  - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-arm64v8"

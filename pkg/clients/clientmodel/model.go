@@ -67,7 +67,7 @@ type (
 		DeleteNamespace(ctx context.Context, namespace string) error
 
 		// CreateNamespace creates a Namespace in the database
-		CreateNamespace(ctx context.Context, Namespace models.Namespace) error
+		CreateNamespace(ctx context.Context, Namespace models.NamespaceRequest) (models.Namespace, error)
 
 		// ListNamespaces lists all Namespaces in the database
 		ListNamespaces(ctx context.Context) ([]models.Namespace, error)

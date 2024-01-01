@@ -16,6 +16,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 
 	"github.com/azrod/golink/api"
+	"github.com/azrod/golink/models"
 	"github.com/azrod/golink/pkg/clients"
 	"github.com/azrod/golink/short"
 
@@ -24,8 +25,8 @@ import (
 
 var (
 	globalEchoLogLevel = log.DEBUG
-
-	ready = false
+	version            = "dev"
+	ready              = false
 )
 
 type config struct {
@@ -51,6 +52,19 @@ func main() {
 		panic(err)
 	}
 
+	// * Check if Namespace default exists
+	if _, err := db.GetNamespace(ctx, "default"); err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			if _, err := db.CreateNamespace(ctx, models.NamespaceRequest{
+				Name: "default",
+			}); err != nil {
+				panic(err)
+			}
+		} else {
+			panic(err)
+		}
+	}
+
 	type serverCfg struct {
 		Host string
 		Port int
@@ -64,6 +78,7 @@ func main() {
 	healthServer.Logger.SetLevel(globalEchoLogLevel)
 	healthServer.Use(middleware.Recover())
 	healthServer.GET("/health", func(c echo.Context) error {
+		// TODO add status check for DB
 		if !ready {
 			return c.String(http.StatusServiceUnavailable, "Not ready")
 		}
@@ -88,7 +103,11 @@ func main() {
 	ui.HEAD("/*", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	})
-	ui.Static("/*", "ui/dist")
+	if version != "dev" {
+		ui.Static("/*", "www")
+	} else {
+		ui.Static("/*", "ui/dist/")
+	}
 
 	api.NewHandlers(db, appServer)
 	short.NewHandlers(db, appServer)
@@ -124,6 +143,8 @@ func main() {
 		}
 		cancel()
 	}
+
+	// TODO close DB connection
 
 	os.Exit(0)
 }

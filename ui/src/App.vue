@@ -253,6 +253,11 @@ export default {
               for (const link of namespace.links) {
                 // Default icon
                 let icon = "fa-solid fa-link";
+                let subtitle = link.sourcePath;
+
+                if (namespace.name !== "default") {
+                  subtitle = "/" + namespace.name + subtitle;
+                }
 
                 switch (true) {
                   case link.targetUrl.includes("github.com"):
@@ -261,13 +266,19 @@ export default {
 
                 items.push({
                   name: link.name,
-                  subtitle: link.sourcePath,
+                  subtitle: subtitle,
                   url: link.targetUrl,
+                  // type: "Info",
                   target: "_blank",
                   icon: icon,
+                  info: link,
                 });
               }
 
+              // if links is empty, skip this namespace
+              if (items.length === 0) {
+                continue;
+              }
               cfg.services.push({
                 name: namespace.name,
                 items: items,
@@ -277,65 +288,65 @@ export default {
           });
       });
     },
-  },
-  matchesFilter: function (item) {
-    const needle = this.filter?.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(needle) ||
-      (item.subtitle && item.subtitle.toLowerCase().includes(needle)) ||
-      (item.tag && item.tag.toLowerCase().includes(needle)) ||
-      (item.keywords && item.keywords.toLowerCase().includes(needle))
-    );
-  },
-  navigateToFirstService: function (target) {
-    try {
-      const service = this.services[0].items[0];
-      window.open(service.url, target || service.target || "_self");
-    } catch (error) {
-      console.warning("fail to open service");
-    }
-  },
-  filterServices: function (filter) {
-    console.log(filter);
-    this.filter = filter;
+    matchesFilter: function (item) {
+      const needle = this.filter?.toLowerCase();
+      return (
+        item.name.toLowerCase().includes(needle) ||
+        (item.subtitle && item.subtitle.toLowerCase().includes(needle)) ||
+        (item.tag && item.tag.toLowerCase().includes(needle)) ||
+        (item.keywords && item.keywords.toLowerCase().includes(needle))
+      );
+    },
+    navigateToFirstService: function (target) {
+      try {
+        const service = this.services[0].items[0];
+        window.open(service.url, target || service.target || "_self");
+      } catch (error) {
+        console.warning("fail to open service");
+      }
+    },
+    filterServices: function (filter) {
+      console.log(filter);
+      this.filter = filter;
 
-    if (!filter) {
-      this.services = this.config.services;
-      return;
-    }
+      if (!filter) {
+        this.services = this.config.services;
+        return;
+      }
 
-    const searchResultItems = [];
-    for (const group of this.config.services) {
-      if (group.items !== null) {
-        for (const item of group.items) {
-          if (this.matchesFilter(item)) {
-            searchResultItems.push(item);
+      const searchResultItems = [];
+      for (const group of this.config.services) {
+        if (group.items !== null) {
+          for (const item of group.items) {
+            if (this.matchesFilter(item)) {
+              searchResultItems.push(item);
+            }
           }
         }
       }
-    }
 
-    this.services = [
-      {
-        name: filter,
-        icon: "fas fa-search",
-        items: searchResultItems,
-      },
-    ];
-  },
-  handleErrors: function (title, content) {
-    return {
-      message: {
-        title: title,
-        style: "is-danger",
-        content: content,
-      },
-    };
-  },
-  createStylesheet: function (css) {
-    let style = document.createElement("style");
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
+      this.services = [
+        {
+          name: filter,
+          icon: "fas fa-search",
+          items: searchResultItems,
+        },
+      ];
+    },
+    handleErrors: function (title, content) {
+      return {
+        message: {
+          title: title,
+          style: "is-danger",
+          content: content,
+        },
+      };
+    },
+    createStylesheet: function (css) {
+      let style = document.createElement("style");
+      style.appendChild(document.createTextNode(css));
+      document.head.appendChild(style);
+    },
   },
 };
 </script>
