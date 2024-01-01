@@ -19,22 +19,22 @@ builds:
 universal_binaries:
   - replace: true
 
-nfpms:
-  - file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'
-    maintainer: https://github.com/azrod
-    package_name: golinkctl
-    description: >-
-      golinkctl is a command line tool to manage golink
-    homepage: https://github.com/azrod/golink
-    license: Apache-2.0
-    formats:
-      - apk
-      - deb
-      - rpm
-      - termux.deb
-      - archlinux 
-    bindir: /usr/bin
-    section: default
+# nfpms:
+#   - file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'
+#     maintainer: https://github.com/azrod
+#     package_name: golinkctl
+#     description: >-
+#       golinkctl is a command line tool to manage golink
+#     homepage: https://github.com/azrod/golink
+#     license: Apache-2.0
+#     formats:
+#       - apk
+#       - deb
+#       - rpm
+#       - termux.deb
+#       - archlinux 
+#     bindir: /usr/bin
+#     section: default
 
 brews:
   - name: '{{ .ProjectName }}'
