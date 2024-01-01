@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  release-app-server:
+  release-app:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,29 +38,3 @@ jobs:
           args: release --clean -f .goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # release-cmd-glctl:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version-file: 'cmd/go.mod'
-  #     - name: Login to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Run GoReleaser
-  #       uses: goreleaser/goreleaser-action@v5
-  #       with:
-  #         distribution: goreleaser
-  #         version: latest
-  #         args: release --clean -f cmd/.goreleaser.yaml
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
