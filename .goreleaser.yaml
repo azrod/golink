@@ -86,12 +86,29 @@ docker_manifests:
   - "ghcr.io/azrod/{{ .ProjectName }}:v{{ .Version }}-arm64v8"
 
 archives:
-  - format: tar.gz
+  # Golink
+  - id: "golink"
+    builds:
+      - golink
+    format: tar.gz
     wrap_in_directory: true
     format_overrides:
       - goos: windows
         format: zip
-    name_template: '{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    name_template: 'golink-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     files:
       - LICENSE
       - README.md
+  # glctl
+  - id: "glctl"
+    builds:
+      - glctl
+    format: tar.gz
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: 'glctl-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    files:
+      - LICENSE
+      - ./cmd/glctl/README.md
