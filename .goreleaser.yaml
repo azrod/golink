@@ -15,7 +15,7 @@ builds:
   - id: "golink"
     binary: golink
     ldflags:
-      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}'
     goos:
       - freebsd
       - windows
@@ -29,7 +29,7 @@ builds:
     binary: glctl
     main: ./cmd/glctl
     ldflags:
-      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
+      - '-s -w -X github.com/azrod/golink/cmd/glctl/main.version={{.Version}} -X github.com/azrod/golink/cmd/glctl/main.commit={{.Commit}} -X github.com/azrod/golink/cmd/glctl/main.date={{.Date}}'
     goos:
       - freebsd
       - windows

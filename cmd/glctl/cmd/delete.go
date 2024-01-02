@@ -1,7 +1,7 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 */
-package cmd
+package glctl
 
 import (
 	"github.com/spf13/cobra"
@@ -11,6 +11,7 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:     "delete",
 	Aliases: []string{"del", "rm"},
+	GroupID: "cmd",
 	Short:   "Delete commands",
 	Long:    `Delete commands are used to delete information from the database.`,
 }

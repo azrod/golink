@@ -1,7 +1,7 @@
 package main
 
-import "github.com/azrod/golink/cmd/glctl/cmd"
+import glctl "github.com/azrod/golink/cmd/glctl/cmd"
 
 func main() {
-	cmd.Execute()
+	glctl.Execute()
 }

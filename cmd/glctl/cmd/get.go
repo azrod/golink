@@ -1,7 +1,7 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 */
-package cmd
+package glctl
 
 import (
 	"github.com/spf13/cobra"
@@ -9,9 +9,10 @@ import (
 
 // getCmd represents the get command.
 var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get commands",
-	Long:  `Get commands are used to retrieve information from the database.`,
+	Use:     "get",
+	Short:   "Get commands",
+	GroupID: "cmd",
+	Long:    `Get commands are used to retrieve information from the database.`,
 }
 
 func init() {

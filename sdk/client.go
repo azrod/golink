@@ -13,17 +13,17 @@ type (
 )
 
 // New - Create new golink Client.
-func New(apiURL string, debug *bool, namespace *string) *Client {
+func New(apiURL string, debug bool, namespace string) *Client {
 	clientResty := resty.New().
 		SetBaseURL(apiURL + "/api/v1").
-		SetDebug(*debug).
+		SetDebug(debug).
 		SetHeaders(map[string]string{
 			"User-Agent": "golinksdk/go:" + version,
 		})
 
 	return &Client{
 		c:         clientResty,
-		namespace: *namespace,
+		namespace: namespace,
 	}
 }
 
