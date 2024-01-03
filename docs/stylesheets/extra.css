@@ -1,0 +1,48 @@
+[data-md-color-scheme="frangipaneCorp-dark"] {
+    --md-primary-bg-color: rgb(203, 166, 247);
+
+    --md-primary-fg-color: rgb(245, 224, 220);
+    --md-typeset-color: rgb(245, 224, 220);
+    --md-typeset-a-color: rgb(137, 220, 235);
+    --md-default-fg-color--light: rgb(166, 227, 161);
+
+    --md-primary-fg-color: rgb(24, 24, 37);
+
+    --md-footer-bg-color: rgb(24, 24, 37);
+    --md-footer-fg-color: rgb(24, 24, 37);
+
+    --md-default-fg-color: rgb(30, 30, 46);
+    --md-default-bg-color: rgb(30, 30, 46);
+
+    --md-admonition-bg-color: rgb(17, 17, 27);
+    --md-admonition-fg-color: rgb(245, 224, 220);
+
+    --md-code-bg-color: rgb(17, 17, 27);
+    --md-code-fg-color: rgb(137, 220, 235);
+    --md-code-hl-punctuation-color: rgb(137, 220, 235);
+
+    --md-default-fg-color--lightest: rgb(250, 179, 135);
+    --md-accent-fg-color: rgb(243, 139, 168);
+
+
+
+    /* rgb(243, 139, 168) */
+}
+
+.md-header__button.md-logo {
+    margin: 0.1rem;
+    padding: 0.2rem;
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+    height: 2rem;
+}
+
+.md-dialog__inner {
+    color: rgb(245, 224, 220);
+}
+
+.terraform {
+    color: rgb(92, 78, 229);
+}
