@@ -3,7 +3,7 @@ site_name: GoLink Documentation
 theme:
   name: material
   palette:
-    - scheme: dark
+    - scheme: custom
   features:
     - content.code.copy
     - navigation.sections
@@ -30,6 +30,7 @@ nav:
     - Deployment:
       - "Getting Start": "deployment/getting-start.md"
       - "Docker": "deployment/docker.md"
+      - "Docker Compose": "deployment/docker-compose.md"
     - Configuration:
       - "File": "configuration/file.md"
       - "Environment": "configuration/env-vars.md"
