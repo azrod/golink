@@ -43,11 +43,12 @@ func main() {
 
 	cfg := config{}
 
-	if err := envconfig.Process(ctx, &cfg); err != nil {
+	l := envconfig.PrefixLookuper("GOLINK_", envconfig.OsLookuper())
+	if err := envconfig.ProcessWith(ctx, &cfg, l); err != nil {
 		panic(err)
 	}
 
-	db, err := clients.NewClient(ctx, clients.Settings{})
+	db, err := clients.NewClient(ctx, clients.Settings{}, l)
 	if err != nil {
 		panic(err)
 	}

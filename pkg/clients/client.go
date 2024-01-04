@@ -18,38 +18,39 @@ type (
 	Settings struct {
 		Redis struct {
 			// DBRedisAddress is the address of the redis database
-			Address string `yaml:"dbRedisAddress" env:"DB_REDIS_ADDRESS,default=localhost:6379"`
+			Address string `yaml:"dbRedisAddress" env:"SB_REDIS_ADDRESS,default=localhost:6379"`
 
 			// Password is the password of the redis database
-			Password string `yaml:"dbRedisPassword" env:"DB_REDIS_PASSWORD"`
+			Password string `yaml:"dbRedisPassword" env:"SB_REDIS_PASSWORD"`
 
 			// Username is the username of the redis database
-			Username string `yaml:"dbRedisUsername" env:"DB_REDIS_USERNAME"`
+			Username string `yaml:"dbRedisUsername" env:"SB_REDIS_USERNAME"`
 
 			// DB is the database number of the redis database
-			DB int `yaml:"dbRedisDb" env:"DB_REDIS_DB,default=0"`
+			DB int `yaml:"dbRedisDb" env:"SB_REDIS_DB,default=0"`
 
 			// MaxRetries is the maximum number of retries before giving up
-			MaxRetries int `yaml:"dbRedisMaxRetries" env:"DB_REDIS_MAX_RETRIES,default=3"`
+			MaxRetries int `yaml:"dbRedisMaxRetries" env:"SB_REDIS_MAX_RETRIES,default=3"`
 
 			// DialTimeout is the maximum number of retries before giving up
-			DialTimeout int `yaml:"dbDialTimeout" env:"DB_REDIS_DIAL_TIMEOUT,default=5"`
+			DialTimeout int `yaml:"dbDialTimeout" env:"SB_REDIS_DIAL_TIMEOUT,default=5"`
 
 			// ReadTimeout is the maximum number of retries before giving up
-			ReadTimeout int `yaml:"dbReadTimeout" env:"DB_REDIS_READ_TIMEOUT,default=3"`
+			ReadTimeout int `yaml:"dbReadTimeout" env:"SB_REDIS_READ_TIMEOUT,default=3"`
 
-			CertFile string `yaml:"dbRedisCertFile" env:"DB_REDIS_CERT_FILE"`
-			KeyFile  string `yaml:"dbRedisKeyFile" env:"DB_REDIS_KEY_FILE"`
-			CAFile   string `yaml:"dbRedisCAFile" env:"DB_REDIS_CA_FILE"`
+			// WriteTimeout is the maximum number of retries before giving up
+			WriteTimeout int `yaml:"dbWriteTimeout" env:"SB_REDIS_WRITE_TIMEOUT,default=3"`
 
-			// TODO add tls config
+			CertFile string `yaml:"dbRedisCertFile" env:"SB_REDIS_CERT_FILE"`
+			KeyFile  string `yaml:"dbRedisKeyFile" env:"SB_REDIS_KEY_FILE"`
+			CAFile   string `yaml:"dbRedisCaFile" env:"SB_REDIS_CA_FILE"`
 		} `yaml:"redis"`
 	}
 )
 
 // NewClient creates a new client.
-func NewClient(ctx context.Context, cfg Settings) (clientmodel.ClientDB, error) {
-	if err := envconfig.Process(ctx, &cfg); err != nil {
+func NewClient(ctx context.Context, cfg Settings, lookup envconfig.Lookuper) (clientmodel.ClientDB, error) {
+	if err := envconfig.ProcessWith(ctx, &cfg, lookup); err != nil {
 		return nil, err
 	}
 
@@ -79,25 +80,27 @@ func NewClient(ctx context.Context, cfg Settings) (clientmodel.ClientDB, error) 
 			}
 
 			return redis.New(redis.Settings{
-				Address:     cfg.Redis.Address,
-				Username:    cfg.Redis.Username,
-				Password:    cfg.Redis.Password,
-				DB:          cfg.Redis.DB,
-				MaxRetries:  cfg.Redis.MaxRetries,
-				DialTimeout: cfg.Redis.DialTimeout,
-				ReadTimeout: cfg.Redis.ReadTimeout,
-				TLSConfig:   tlsConfig,
+				Address:      cfg.Redis.Address,
+				Username:     cfg.Redis.Username,
+				Password:     cfg.Redis.Password,
+				DB:           cfg.Redis.DB,
+				MaxRetries:   cfg.Redis.MaxRetries,
+				DialTimeout:  cfg.Redis.DialTimeout,
+				ReadTimeout:  cfg.Redis.ReadTimeout,
+				WriteTimeout: cfg.Redis.WriteTimeout,
+				TLSConfig:    tlsConfig,
 			})
 		}
 
 		return redis.New(redis.Settings{
-			Address:     cfg.Redis.Address,
-			Username:    cfg.Redis.Username,
-			Password:    cfg.Redis.Password,
-			DB:          cfg.Redis.DB,
-			MaxRetries:  cfg.Redis.MaxRetries,
-			DialTimeout: cfg.Redis.DialTimeout,
-			ReadTimeout: cfg.Redis.ReadTimeout,
+			Address:      cfg.Redis.Address,
+			Username:     cfg.Redis.Username,
+			Password:     cfg.Redis.Password,
+			DB:           cfg.Redis.DB,
+			MaxRetries:   cfg.Redis.MaxRetries,
+			DialTimeout:  cfg.Redis.DialTimeout,
+			ReadTimeout:  cfg.Redis.ReadTimeout,
+			WriteTimeout: cfg.Redis.WriteTimeout,
 		})
 
 	default:

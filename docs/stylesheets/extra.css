@@ -1,4 +1,3 @@
-/* [data-md-color-scheme="golink"] { */
 :root {
     --md-primary-bg-color: rgb(203, 166, 247);
 
@@ -21,9 +20,9 @@
     --md-code-bg-color: rgb(17, 17, 27);
     --md-code-fg-color: rgb(137, 220, 235);
     --md-code-hl-punctuation-color: rgb(137, 220, 235);
-    /* 
+
     --md-default-fg-color--lightest: rgb(250, 179, 135);
-    --md-accent-fg-color: rgb(243, 139, 168); */
+    --md-accent-fg-color: rgb(243, 139, 168);
 }
 
 .md-header__button.md-logo {

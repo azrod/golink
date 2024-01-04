@@ -26,55 +26,52 @@ plugins:
 
 nav:
   - Overview: "index.md"
-  - Deployment:
-    - "Getting Start": "deployment/getting-start.md"
-    - "Docker": "deployment/docker.md"
+  - Golink Server:
+    - Deployment:
+      - "Getting Start": "deployment/getting-start.md"
+      - "Docker": "deployment/docker.md"
+    - Configuration:
+      - "File": "configuration/file.md"
+      - "Environment": "configuration/env-vars.md"
+    - Storage Backend:
+      - "Getting Start": "storage/index.md"
+      - "Redis": "storage/redis.md"
   - glctl (CLI):
     - "Install": "glctl/install.md"
+    - "Usage": "glctl/usage.md"
 
 markdown_extensions:
-  - attr_list
-  - pymdownx.highlight:
-      anchor_linenums: true
+  # Python Markdown
+  - abbr
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
   - pymdownx.details
-  - pymdownx.superfences
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
-
-
-  # # Python Markdown
-  # - abbr
-  # - admonition
-  # - attr_list
-  # - def_list
-  # - footnotes
-  # - md_in_html
-  # - toc:
-  #     permalink: true
-
-  # # Python Markdown Extensions
-  # - pymdownx.arithmatex:
-  #     generic: true
-  # - pymdownx.betterem:
-  #     smart_enable: all
-  # - pymdownx.caret
-  # - pymdownx.details
-  # - pymdownx.emoji:
-  #     emoji_index: !!python/name:material.extensions.emoji.twemoji
-  #     emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  # - pymdownx.highlight
-  # - pymdownx.inlinehilite
-  # - pymdownx.keys
-  # - pymdownx.mark
-  # - pymdownx.smartsymbols
-  # - pymdownx.superfences
-  # - pymdownx.tabbed:
-  #     alternate_style: true
-  # - pymdownx.tasklist:
-  #     custom_checkbox: true
-  # - pymdownx.tilde
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 
 
