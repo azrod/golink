@@ -16,7 +16,11 @@ var versionCmd = &cobra.Command{
 	Short:   "Returns the version of the application",
 	Long:    `Returns the version, commit hash and build date of the application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Printf("Version: %s\nCommit: %s\nBuild Date: %s\n", version, commit, date)
+		log.Printf(`Client informations:
+  Version: %s
+  Commit: %s
+  Build Date: %s`,
+			version, commit, date)
 	},
 }
 

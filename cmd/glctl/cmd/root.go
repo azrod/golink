@@ -12,11 +12,14 @@ import (
 	golink "github.com/azrod/golink/sdk"
 )
 
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-)
+// version that can be overwritten by a release process.
+var version = "dev"
+
+// commit that can be overwritten by a release process.
+var commit = "none"
+
+// date that can be overwritten by a release process.
+var date = "unknown"
 
 var sdk *golink.Client
 

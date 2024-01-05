@@ -29,7 +29,7 @@ builds:
     binary: glctl
     main: ./cmd/glctl
     ldflags:
-      - '-s -w -X github.com/azrod/golink/cmd/glctl/main.version={{.Version}} -X github.com/azrod/golink/cmd/glctl/main.commit={{.Commit}} -X github.com/azrod/golink/cmd/glctl/main.date={{.Date}}'
+      - '-s -w -X github.com/azrod/golink/cmd/glctl/cmd.version={{.Version}} -X github.com/azrod/golink/cmd/glctl/cmd.commit={{.Commit}} -X github.com/azrod/golink/cmd/glctl/cmd.date={{.Date}}'
     goos:
       - freebsd
       - windows
