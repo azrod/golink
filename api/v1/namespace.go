@@ -787,7 +787,7 @@ func (h *v1) deleteLinkFromNamespace(c echo.Context) error {
 		))
 	}
 
-	linkID := c.Param("linkID")
+	linkID := c.Param("linkid")
 	if linkID == "" {
 		return c.JSON(http.StatusBadRequest, model.NewAPIResponseError(
 			c,

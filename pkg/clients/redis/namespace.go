@@ -44,14 +44,24 @@ func (c Client) GetNamespace(ctx context.Context, namespace string) (models.Name
 
 // DeleteNamespace deletes a Namespace from the database.
 func (c Client) DeleteNamespace(ctx context.Context, namespace string) error {
+	ns := namespace
+
 	if !strings.Contains(namespace, NamespaceKey) {
 		namespace = NamespaceKey + namespace
 	}
 
-	iter := c.c.Scan(ctx, 0, fmt.Sprintf("%s%s:*", NamespaceKey, namespace), 0).Iterator()
-	if iter.Err() == nil {
-		// Found keys - return error
-		return fmt.Errorf("namespace %s is not empty", namespace)
+	// Check if namespace exists
+	if _, err := c.GetNamespace(ctx, ns); err != nil {
+		return err
+	}
+
+	// Check if namespace is empty
+	if links, err := c.ListLinks(ctx, ns); err != nil || len(links) > 0 {
+		if err != nil {
+			return err
+		}
+		// Found links - return error
+		return fmt.Errorf("namespace %s is not empty\nFound %d link(s)", ns, len(links))
 	}
 
 	return c.c.Del(ctx, namespace).Err()
