@@ -188,4 +188,7 @@ yarn-error.log
 # and uncomment the following lines
 # .pnp.*
 
+# Used for air
+/tmp
+
 # End of https://www.toptal.com/developers/gitignore/api/go,vuejs,node,yarn
