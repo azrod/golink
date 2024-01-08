@@ -835,12 +835,12 @@ func (h *v1) deleteLinkFromNamespace(c echo.Context) error {
 // @Tags namespaces
 // @Produce json
 // @Param name path string true "Namespace"
-// @Param linkName path string true "Link Name"
+// @Param linkname path string true "Link Name"
 // @Success 200 {object} models.APIResponse{}
 // @failure 500 {object} models.APIResponseError{error=models.APIResponseError500}
 // @failure 404 {object} models.APIResponseError{error=models.APIResponseError404}
 // @failure 400 {object} models.APIResponseError{error=models.APIResponseError400}
-// @Router /namespace/{name}/link/name/{linkName} [delete].
+// @Router /namespace/{name}/link/name/{linkname} [delete].
 func (h *v1) deleteLinkByNameFromNamespace(c echo.Context) error {
 	name := c.Param("name")
 	if name == "" {
@@ -854,7 +854,7 @@ func (h *v1) deleteLinkByNameFromNamespace(c echo.Context) error {
 		))
 	}
 
-	linkName := c.Param("linkName")
+	linkName := c.Param("linkname")
 	if linkName == "" {
 		return c.JSON(http.StatusBadRequest, model.NewAPIResponseError(
 			c,

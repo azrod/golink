@@ -1,9 +1,9 @@
 package glctl
 
 import (
+	"context"
 	"log"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
 
 	"github.com/azrod/golink/models"
@@ -20,57 +20,21 @@ var deleteLinkCmd = &cobra.Command{
 		return cobra.ExactArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		// Create a new context with timeout
+		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
+		defer cancel()
 		sdk.SetNamespace(globalFlagNamespace)
 
-		id := args[0]
-
-		if !models.IsValidUUID(id) {
-			// Arg is not an ID, try to find the link by name
-			rFromName, err := resty.New().
-				SetBaseURL(apiURL).
-				R().
-				SetDebug(globalFlagDebug).
-				SetResult(&models.Link{}).
-				Get("/api/v1/link/name/" + id)
-			if err != nil {
-				log.Default().Printf("Failed to get link: %s", err)
+		if !models.IsValidUUID(args[0]) {
+			if err := sdk.DeleteLinkByName(ctx, args[0]); err != nil {
+				log.Default().Printf("Failed to delete link: %s", err)
 				return
 			}
-
-			if rFromName.IsError() {
-				log.Default().Printf("Failed to get link: %s", rFromName.Error())
+		} else {
+			if err := sdk.DeleteLink(ctx, models.LinkID(args[0])); err != nil {
+				log.Default().Printf("Failed to delete link: %s", err)
 				return
 			}
-
-			id = rFromName.Result().(*models.Link).ID.String()
-		}
-
-		v := &models.Link{
-			LinkRequest: models.LinkRequest{
-				Name:       args[0],
-				SourcePath: args[1],
-				TargetURL:  args[2],
-				Enabled:    models.Enabled(!addCmdFlagDisable),
-			},
-			// TODO add labels and group
-		}
-
-		r, err := resty.New().
-			SetBaseURL(apiURL).
-			R().
-			SetDebug(globalFlagDebug).
-			SetResult(&models.Link{}).
-			SetBody(v).
-			SetPathParam("id", id).
-			Delete("/api/v1/link/{id}")
-		if err != nil {
-			log.Default().Printf("Failed to deletelink: %s", err)
-			return
-		}
-
-		if r.IsError() {
-			log.Default().Printf("Failed to deletelink: %s", r.Error())
-			return
 		}
 
 		log.Default().Printf("Successfully deleted link %s !", args[0])

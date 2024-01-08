@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var _ model = (*Link)(nil)
+var _ Model = (*Link)(nil)
 
 type (
 	// LinkRequest is the model for the link request.

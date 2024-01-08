@@ -4,12 +4,12 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/azrod/golink/api/model"
-	"github.com/azrod/golink/pkg/clients/clientmodel"
+	"github.com/azrod/golink/pkg/sb"
 )
 
 type v1 model.HandlerAPIVersion
 
-func New(db clientmodel.ClientDB, e *echo.Group) {
+func New(db sb.Client, e *echo.Group) {
 	h := &v1{
 		DB:        db,
 		EchoGroup: e,

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var _ model = (*Namespace)(nil)
+var _ Model = (*Namespace)(nil)
 
 type (
 	NamespaceRequest struct {

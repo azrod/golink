@@ -4,17 +4,17 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/azrod/golink/models"
-	"github.com/azrod/golink/pkg/clients/clientmodel"
+	"github.com/azrod/golink/pkg/sb"
 )
 
 type (
 	HandlerFunc echo.HandlerFunc
 	Handlers    struct {
-		DB         clientmodel.ClientDB
+		DB         sb.Client
 		EchoServer *echo.Echo
 	}
 	HandlerAPIVersion struct {
-		DB        clientmodel.ClientDB
+		DB        sb.Client
 		EchoGroup *echo.Group
 	}
 )

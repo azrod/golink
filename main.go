@@ -13,11 +13,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"github.com/sethvargo/go-envconfig"
 
 	"github.com/azrod/golink/api"
 	"github.com/azrod/golink/models"
-	"github.com/azrod/golink/pkg/clients"
+	"github.com/azrod/golink/pkg/config"
+	"github.com/azrod/golink/pkg/sb"
 	"github.com/azrod/golink/short"
 
 	_ "github.com/azrod/golink/docs/echosimple"
@@ -29,26 +29,17 @@ var (
 	ready              = false
 )
 
-type config struct {
-	ServerPort int    `env:"SERVER_PORT,default=8081"`
-	ServerHost string `env:"SERVER_HOST,default=localhost"`
-	ServerURL  string `env:"SERVER_URL,default=http://localhost:8081"`
-
-	HealthServerPort int    `env:"HEALTH_SERVER_PORT,default=8082"`
-	HealthServerHost string `env:"HEALTH_SERVER_HOST,default=localhost"`
-}
-
 func main() {
 	ctx := context.Background()
 
-	cfg := config{}
-
-	l := envconfig.PrefixLookuper("GOLINK_", envconfig.OsLookuper())
-	if err := envconfig.ProcessWith(ctx, &cfg, l); err != nil {
+	// * Load config
+	cfg, err := config.Read()
+	if err != nil {
 		panic(err)
 	}
 
-	db, err := clients.NewClient(ctx, clients.Settings{}, l)
+	// * Setup Storage Backend
+	db, err := sb.New(cfg.Storage)
 	if err != nil {
 		panic(err)
 	}
@@ -67,8 +58,8 @@ func main() {
 	}
 
 	type serverCfg struct {
-		Host string
-		Port int
+		Address string
+		Port    int
 	}
 
 	httpServers := make(map[serverCfg]*echo.Echo)
@@ -86,8 +77,8 @@ func main() {
 		return c.String(http.StatusOK, "OK")
 	})
 	httpServers[serverCfg{
-		Host: cfg.HealthServerHost,
-		Port: cfg.HealthServerPort,
+		Address: cfg.Health.Address,
+		Port:    cfg.Health.Port,
 	}] = healthServer
 
 	// * App server
@@ -113,15 +104,15 @@ func main() {
 	api.NewHandlers(db, appServer)
 	short.NewHandlers(db, appServer)
 	httpServers[serverCfg{
-		Host: cfg.ServerHost,
-		Port: cfg.ServerPort,
+		Address: cfg.App.Address,
+		Port:    cfg.App.Port,
 	}] = appServer
 
 	// * Start HTTP servers
 	for cfg, server := range httpServers {
 		go func(server *echo.Echo, cfg serverCfg) {
-			server.Logger.Infof("Starting server on %s:%d", cfg.Host, cfg.Port)
-			if err := server.Start(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			server.Logger.Infof("Starting server on %s:%d", cfg.Address, cfg.Port)
+			if err := server.Start(fmt.Sprintf("%s:%d", cfg.Address, cfg.Port)); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				server.Logger.Fatal("shutting down the server")
 			}
 		}(server, cfg)
