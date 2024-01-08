@@ -1,7 +1,7 @@
 package models
 
 type (
-	model interface {
+	Model interface {
 		Validate() error
 		MarshalJSON() ([]byte, error)
 		UnmarshalJSON([]byte) error

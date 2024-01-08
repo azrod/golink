@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var _ model = (*Label)(nil)
+var _ Model = (*Label)(nil)
 
 type (
 	LabelRequest struct {

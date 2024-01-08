@@ -191,4 +191,5 @@ yarn-error.log
 # Used for air
 /tmp
 
+*.db
 # End of https://www.toptal.com/developers/gitignore/api/go,vuejs,node,yarn

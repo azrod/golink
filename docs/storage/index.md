@@ -5,9 +5,32 @@ hide:
 
 # Storage backend
 
-!!! note "Note"
-    The golink server has a pluggable storage backend. Actually, only one storage backend is implemented at the moment, but the plan is to add more in the future.
+The golink server has a pluggable storage backend. The storage backend is responsible for storing and retrieving the golinks.
 
 ## List of storage backends
 
+* [Local](local.md) (***default***)
 * [Redis](redis.md)
+
+## Configuration
+
+!!! example "Set configuration of the storage backend"
+
+    === "YAML"
+
+        ``` yaml
+        storage:
+          type: local
+        ```
+
+    === "Flag"
+
+        ``` sh
+        --storage.type=local
+        ```
+
+    === "Environment variable"
+
+        ``` sh
+        export GOLINK_STORAGE_TYPE=local
+        ```

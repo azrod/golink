@@ -31,15 +31,19 @@ nav:
       - "Getting Start": "deployment/getting-start.md"
       - "Docker": "deployment/docker.md"
       - "Docker Compose": "deployment/docker-compose.md"
-    - Configuration:
-      - "File": "configuration/file.md"
-      - "Environment": "configuration/env-vars.md"
+      - "Manual": "deployment/manual.md"
+    - Configuration: "configuration/index.md"
     - Storage Backend:
       - "Getting Start": "storage/index.md"
+      - "Local Filesystem": "storage/local.md"
       - "Redis": "storage/redis.md"
   - glctl (CLI):
+    - "Concept": "glctl/concept.md"
     - "Install": "glctl/install.md"
     - "Usage": "glctl/usage.md"
+    - "Commands":
+      - "namespace": "glctl/commands/namespace.md"
+      - "link": "glctl/commands/link.md"
 
 markdown_extensions:
   # Python Markdown
@@ -73,7 +77,6 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-
 
 
 extra:

@@ -7,10 +7,10 @@ import (
 
 	"github.com/azrod/golink/api/model"
 	apiv1 "github.com/azrod/golink/api/v1"
-	"github.com/azrod/golink/pkg/clients/clientmodel"
+	"github.com/azrod/golink/pkg/sb"
 )
 
-func NewHandlers(db clientmodel.ClientDB, e *echo.Echo) *model.Handlers {
+func NewHandlers(db sb.Client, e *echo.Echo) *model.Handlers {
 	h := &model.Handlers{
 		DB:         db,
 		EchoServer: e,
