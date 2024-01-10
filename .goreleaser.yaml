@@ -25,6 +25,8 @@ builds:
       - amd64
       - arm
       - arm64
+    env:
+      - CGO_ENABLED=0
   - id: "glctl"
     binary: glctl
     main: ./cmd/glctl
@@ -39,6 +41,8 @@ builds:
       - amd64
       - arm
       - arm64
+    env:
+      - CGO_ENABLED=0
 
 dockers:
   - goarch: amd64 
@@ -48,8 +52,12 @@ dockers:
       - ui/
     dockerfile: Dockerfile
     use: buildx
+    ids:
+      - golink
+      - glctl
     build_flag_templates:
     - --platform=linux/amd64
+    - --pull
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
     - --label=org.opencontainers.image.url=https://github.com/azrod/{{ .ProjectName }}
@@ -65,8 +73,12 @@ dockers:
       - ui/
     dockerfile: Dockerfile
     use: buildx
+    ids:
+      - golink
+      - glctl
     build_flag_templates:
     - --platform=linux/arm64/v8
+    - --pull
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
     - --label=org.opencontainers.image.url=https://github.com/azrod/{{ .ProjectName }}
