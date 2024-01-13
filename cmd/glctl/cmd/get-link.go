@@ -42,8 +42,6 @@ var getLinkCmd = &cobra.Command{
 			err   error
 		)
 
-		spin.Start()
-
 		if len(args) > 0 {
 			for _, arg := range args {
 				var (
@@ -83,7 +81,6 @@ var getLinkCmd = &cobra.Command{
 				}
 				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String())
 			}
-			spin.Stop()
 			w.Flush()
 
 		case globalFlagOutputWide:
@@ -94,7 +91,6 @@ var getLinkCmd = &cobra.Command{
 			for _, l := range links {
 				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String(), l.Labels)
 			}
-			spin.Stop()
 			w.Flush()
 		}
 	},

@@ -44,9 +44,6 @@ $> glctl get namespace [NAME] [NAME] [NAME]`,
 
 		return names, cobra.ShellCompDirectiveNoFileComp
 	},
-	PreRun: func(cmd *cobra.Command, args []string) {
-		spin.Start()
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			sdk = initSDK()
@@ -81,7 +78,6 @@ $> glctl get namespace [NAME] [NAME] [NAME]`,
 			for _, l := range nss {
 				fmt.Fprintf(w, fs, l.Name, l.Enabled, fmt.Sprintf("%d", len(l.Links)))
 			}
-			spin.Stop()
 			w.Flush()
 		}
 	},
