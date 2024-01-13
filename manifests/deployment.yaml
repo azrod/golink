@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: golink
+  name: golink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golink
+  template:
+    metadata:
+      labels:
+        app: golink
+    spec:
+      containers:
+      - name: golink
+        image: ghcr.io/azrod/golink:latest
+        args:
+        - --app.address=0.0.0.0
+        - --health.address=0.0.0.0
+        - --health.port=8082
+        env:
+        ports:
+        - containerPort: 8081
+        - name: healthcheck
+          containerPort: 8082
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: healthcheck
+          initialDelaySeconds: 3
+          periodSeconds: 3
