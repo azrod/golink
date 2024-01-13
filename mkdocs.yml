@@ -23,6 +23,7 @@ extra_css:
 
 plugins:
   - search
+  - mkdocs-video
 
 nav:
   - Overview: "index.md"
@@ -44,6 +45,12 @@ nav:
     - "Commands":
       - "namespace": "glctl/commands/namespace.md"
       - "link": "glctl/commands/link.md"
+      - "go": "glctl/commands/go.md"
+    - "Completions":
+      - "Bash": "glctl/completions/bash.md"
+      - "Zsh": "glctl/completions/zsh.md"
+      - "Fish": "glctl/completions/fish.md"
+      - "PowerShell": "glctl/completions/powershell.md"
 
 markdown_extensions:
   # Python Markdown

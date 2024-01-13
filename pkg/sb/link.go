@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
+	"sync"
 
 	"github.com/azrod/golink/models"
 	"github.com/azrod/golink/pkg/kvstores/kvmodel"
@@ -112,20 +114,47 @@ func (c Client) CountLinks(ctx context.Context, namespace string) (int, error) {
 
 // ListLinks lists all links in the database.
 func (c Client) ListLinks(ctx context.Context, namespace string) ([]models.Link, error) {
-	links := make([]models.Link, 0)
 	keys, err := c.c.List(ctx, fmt.Sprintf("%s%s", linkKey, namespace))
 	if err != nil {
 		return []models.Link{}, err
 	}
 
-	for _, key := range keys {
-		link, err := c.GetLinkByID(ctx, models.LinkID(key), namespace)
-		if err != nil {
-			continue
-		}
+	// add mutex write for nss slice
+	mutex := sync.Mutex{}
 
-		links = append(links, link)
+	// new wait group
+	wg := sync.WaitGroup{}
+	chErr := make(chan error)
+
+	links := make([]models.Link, len(keys))
+
+	for i, li := range keys {
+		wg.Add(1)
+		go func(index int, li string) {
+			defer wg.Done()
+
+			link, err := c.GetLinkByID(ctx, models.LinkID(li), namespace)
+			if err != nil {
+				chErr <- err
+				return
+			}
+
+			mutex.Lock()
+			links[index] = link
+			mutex.Unlock()
+		}(i, li)
 	}
+
+	go func() {
+		for err := range chErr {
+			log.Default().Printf("Failed to get namespace: %s", err)
+			return
+		}
+	}()
+
+	// wait for all goroutines to finish
+	wg.Wait()
+	close(chErr)
 
 	return links, nil
 }

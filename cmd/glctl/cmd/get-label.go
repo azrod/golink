@@ -22,6 +22,8 @@ var getLabelCmd = &cobra.Command{
 	Short:   "Get labels",
 	Long:    `Return a list of labels or a single label by name or ID.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		initSDK()
+
 		sdk.SetNamespace(globalFlagNamespace)
 
 		// Create a new context with timeout

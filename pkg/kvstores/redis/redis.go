@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -103,7 +104,14 @@ func (c Client) List(ctx context.Context, prefix string) (keys []string, err err
 		return nil, kvmodel.ErrEmptyPrefix
 	}
 
-	return c.c.Keys(ctx, prefix+"*").Result()
+	pattern := func() string {
+		if strings.HasSuffix(prefix, ":") {
+			return prefix + "*"
+		}
+		return prefix + ":*"
+	}()
+
+	return c.c.Keys(ctx, pattern).Result()
 }
 
 // Delete deletes the value for the given key.

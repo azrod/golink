@@ -1,7 +1,6 @@
 package glctl
 
 import (
-	"context"
 	"fmt"
 	"log"
 
@@ -25,20 +24,16 @@ var delLabelCmd = &cobra.Command{
 		return cobra.MinimumNArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		sdk.SetNamespace(globalFlagNamespace)
-
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
+		sdk := initSDK()
 
 		if models.IsValidUUID(args[0]) {
 			// Arg is not an ID, try to find the label by name
-			if err := sdk.DeleteLabelByID(ctx, models.LabelID(args[0])); err != nil {
+			if err := sdk.DeleteLabelByID(cmd.Context(), models.LabelID(args[0])); err != nil {
 				log.Default().Printf("Failed to get label: %s", err)
 				return
 			}
 		} else {
-			if err := sdk.DeleteLabelByName(ctx, args[0]); err != nil {
+			if err := sdk.DeleteLabelByName(cmd.Context(), args[0]); err != nil {
 				log.Default().Printf("Failed to get label: %s", err)
 				return
 			}

@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -21,30 +20,42 @@ var getLinkCmd = &cobra.Command{
 	Aliases: []string{"li"},
 	Short:   "Get links",
 	Long:    `Return a list of links or a single link by name or ID.`,
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		sdk := initSDK()
+		links, err := sdk.GetLinks(cmd.Context())
+		if err != nil {
+			log.Default().Printf("Failed to get links: %s", err)
+			return nil, cobra.ShellCompDirectiveError
+		}
+
+		var names []string
+		for _, l := range links {
+			names = append(names, l.Name)
+		}
+
+		return names, cobra.ShellCompDirectiveNoFileComp
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		sdk.SetNamespace(globalFlagNamespace)
-
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
-
 		var (
+			sdk   = initSDK()
 			links []models.Link
 			err   error
 		)
 
-		if len(args) > 0 {
-			if models.IsValidUUID(args[0]) {
-				// Arg is not an ID, try to find the link by name
-				link, err := sdk.GetLinkByID(ctx, models.LinkID(args[0]))
-				if err != nil {
-					log.Default().Printf("Failed to get link: %s", err)
-					return
-				}
+		spin.Start()
 
-				links = append(links, link)
-			} else {
-				link, err := sdk.GetLinkByName(ctx, args[0])
+		if len(args) > 0 {
+			for _, arg := range args {
+				var (
+					link models.Link
+					err  error
+				)
+				// Arg is not an ID, try to find the link by name
+				if models.IsValidUUID(arg) {
+					link, err = sdk.GetLinkByID(cmd.Context(), models.LinkID(arg))
+				} else {
+					link, err = sdk.GetLinkByName(cmd.Context(), arg)
+				}
 				if err != nil {
 					log.Default().Printf("Failed to get link: %s", err)
 					return
@@ -53,7 +64,7 @@ var getLinkCmd = &cobra.Command{
 				links = append(links, link)
 			}
 		} else {
-			links, err = sdk.GetLinks(ctx)
+			links, err = sdk.GetLinks(cmd.Context())
 			if err != nil {
 				log.Default().Printf("Failed to get links: %s", err)
 				return
@@ -67,9 +78,12 @@ var getLinkCmd = &cobra.Command{
 			fmt.Fprintf(w, fs, "NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS")
 
 			for _, l := range links {
+				if len(l.TargetURL) > 50 {
+					l.TargetURL = l.TargetURL[:50] + "..."
+				}
 				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String())
 			}
-
+			spin.Stop()
 			w.Flush()
 
 		case globalFlagOutputWide:
@@ -80,7 +94,7 @@ var getLinkCmd = &cobra.Command{
 			for _, l := range links {
 				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String(), l.Labels)
 			}
-
+			spin.Stop()
 			w.Flush()
 		}
 	},
@@ -88,14 +102,4 @@ var getLinkCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getLinkCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// linkCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// linkCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

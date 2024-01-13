@@ -56,3 +56,7 @@ func New(config Config) (client Client, err error) {
 	log.Default().Printf("Successfully connected to the storage backend: %s", config.Type)
 	return client, err
 }
+
+func (c Client) Close() error {
+	return c.c.Close()
+}

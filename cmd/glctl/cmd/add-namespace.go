@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -21,13 +20,9 @@ var addNamespaceCmd = &cobra.Command{
 		return cobra.MinimumNArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		sdk.SetNamespace(globalFlagNamespace)
+		sdk := initSDK()
 
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
-
-		_, err := sdk.CreateNamespace(ctx, args[0])
+		_, err := sdk.CreateNamespace(cmd.Context(), args[0])
 		if err != nil {
 			log.Default().Printf("Failed to add namespace: %s", err)
 			return

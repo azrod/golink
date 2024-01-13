@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -21,26 +20,52 @@ var getNamespaceCmd = &cobra.Command{
 	Aliases: []string{"ns"},
 	Short:   "Get namespaces",
 	Long:    `List all namespaces or get a specific namespace by name.`,
+	Example: `
+# List all namespaces
+$> glctl get namespace
+	  
+# Get a specific namespace
+$> glctl get namespace [NAME]
+
+# Get a multiple namespaces
+$> glctl get namespace [NAME] [NAME] [NAME]`,
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		sdk := initSDK()
+		nss, err := sdk.GetNamespaces(cmd.Context())
+		if err != nil {
+			log.Default().Printf("Failed to get namespaces: %s", err)
+			return nil, cobra.ShellCompDirectiveError
+		}
+
+		var names []string
+		for _, ns := range nss {
+			names = append(names, ns.Name)
+		}
+
+		return names, cobra.ShellCompDirectiveNoFileComp
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		spin.Start()
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		sdk.SetNamespace(globalFlagNamespace)
-
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
-
-		var err error
-		nss := []models.Namespace{}
+		var (
+			sdk = initSDK()
+			err error
+			nss = []models.Namespace{}
+		)
 
 		if len(args) > 0 {
-			ns, err := sdk.GetNamespace(ctx, args[0])
-			if err != nil {
-				log.Default().Printf("Failed to get namespace: %s", err)
-				return
-			}
+			for _, name := range args {
+				ns, err := sdk.GetNamespace(cmd.Context(), name)
+				if err != nil {
+					log.Default().Printf("Failed to get namespace: %s", err)
+					return
+				}
 
-			nss = append(nss, ns)
+				nss = append(nss, ns)
+			}
 		} else {
-			nss, err = sdk.GetNamespaces(ctx)
+			nss, err = sdk.GetNamespaces(cmd.Context())
 			if err != nil {
 				log.Default().Printf("Failed to get namespaces: %s", err)
 				return
@@ -56,7 +81,7 @@ var getNamespaceCmd = &cobra.Command{
 			for _, l := range nss {
 				fmt.Fprintf(w, fs, l.Name, l.Enabled, fmt.Sprintf("%d", len(l.Links)))
 			}
-
+			spin.Stop()
 			w.Flush()
 		}
 	},

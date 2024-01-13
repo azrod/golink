@@ -1,10 +1,12 @@
 package glctl
 
 import (
+	"context"
 	"log"
 	"os"
 	"time"
 
+	"github.com/janeczku/go-spinner"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -23,6 +25,8 @@ var date = "unknown"
 
 var sdk *golink.Client
 
+var spin *spinner.Spinner
+
 var apiURL = "http://localhost:8081"
 
 // rootCmd represents the base command when called without any subcommands.
@@ -35,7 +39,15 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	spin = spinner.NewSpinner("Loading...")
+	spin.SetCharset([]string{"◜", "◠", "◝", "◞", "◡", "◟"})
+	spin.SetSpeed(100 * time.Millisecond)
+
+	// Create a new context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
+	defer cancel()
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		os.Exit(1)
 	}
 }
@@ -79,6 +91,23 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&globalFlagNamespace, "namespace", "n", "default", "namespace")
+	rootCmd.RegisterFlagCompletionFunc("namespace", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		sdk := initSDK()
+
+		nss, err := sdk.GetNamespaces(cmd.Context())
+		if err != nil {
+			log.Default().Printf("Failed to get namespaces: %s", err)
+			return nil, cobra.ShellCompDirectiveError
+		}
+
+		var names []string
+		for _, ns := range nss {
+			names = append(names, ns.Name)
+		}
+
+		return names, cobra.ShellCompDirectiveNoFileComp
+	})
+
 	if err := viper.BindPFlag("namespace", rootCmd.PersistentFlags().Lookup("namespace")); err != nil {
 		log.Fatal(err)
 	}
@@ -99,8 +128,6 @@ func init() {
 			Title: "Other Commands",
 		},
 	)
-
-	sdk = golink.New(viper.Get("host").(string), viper.Get("debug").(bool), viper.Get("namespace").(string))
 }
 
 // initConfig.
@@ -142,4 +169,8 @@ func initConfig() {
 		log.Printf("Can't read config: %s", err)
 		os.Exit(1)
 	}
+}
+
+func initSDK() *golink.Client {
+	return golink.New(viper.Get("host").(string), viper.Get("debug").(bool), viper.Get("namespace").(string))
 }

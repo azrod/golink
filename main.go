@@ -136,7 +136,10 @@ func main() {
 		cancel()
 	}
 
-	// TODO close DB connection
+	// * Close Storage Backend
+	if err := db.Close(); err != nil {
+		panic(err)
+	}
 
 	os.Exit(0)
 }

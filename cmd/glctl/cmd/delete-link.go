@@ -1,7 +1,6 @@
 package glctl
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -20,18 +19,15 @@ var deleteLinkCmd = &cobra.Command{
 		return cobra.ExactArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
-		sdk.SetNamespace(globalFlagNamespace)
+		sdk := initSDK()
 
 		if !models.IsValidUUID(args[0]) {
-			if err := sdk.DeleteLinkByName(ctx, args[0]); err != nil {
+			if err := sdk.DeleteLinkByName(cmd.Context(), args[0]); err != nil {
 				log.Default().Printf("Failed to delete link: %s", err)
 				return
 			}
 		} else {
-			if err := sdk.DeleteLink(ctx, models.LinkID(args[0])); err != nil {
+			if err := sdk.DeleteLink(cmd.Context(), models.LinkID(args[0])); err != nil {
 				log.Default().Printf("Failed to delete link: %s", err)
 				return
 			}

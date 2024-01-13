@@ -1,7 +1,6 @@
 package glctl
 
 import (
-	"context"
 	"fmt"
 	"log"
 
@@ -41,11 +40,7 @@ var addLabelCmd = &cobra.Command{
 		return cobra.MinimumNArgs(1)(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		sdk.SetNamespace(globalFlagNamespace)
-
-		// Create a new context with timeout
-		ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-		defer cancel()
+		sdk := initSDK()
 
 		v := models.LabelRequest{
 			Name: args[0],
@@ -59,7 +54,7 @@ var addLabelCmd = &cobra.Command{
 			v.Color = models.ColorName(addLabelCmdFlagColor)
 		}
 
-		if _, err := sdk.AddLabel(ctx, v); err != nil {
+		if _, err := sdk.AddLabel(cmd.Context(), v); err != nil {
 			log.Default().Printf("Failed to add label: %s\n", err)
 			return
 		}

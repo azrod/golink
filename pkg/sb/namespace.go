@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
+	"sync"
 
 	"github.com/azrod/golink/models"
 	"github.com/azrod/golink/pkg/kvstores/kvmodel"
@@ -66,15 +68,15 @@ func (c Client) DeleteNamespace(ctx context.Context, namespace string) error {
 	}
 
 	// Check if namespace is empty
-	if links, err := c.ListLinks(ctx, namespace); err != nil || len(links) > 0 {
+	if links, err := c.CountLinks(ctx, namespace); err != nil || links > 0 {
 		if err != nil {
 			return err
 		}
 		// Found links - return error
-		return fmt.Errorf("namespace %s is not empty\nFound %d link(s)", namespace, len(links))
+		return fmt.Errorf("namespace %s is not empty\nFound %d link(s)", namespace, links)
 	}
 
-	return c.c.Delete(ctx, namespace)
+	return c.c.Delete(ctx, NamespaceKey+namespace)
 }
 
 // ListNamespaces lists all namespaces in the database.
@@ -84,14 +86,42 @@ func (c Client) ListNamespaces(ctx context.Context) (nss []models.Namespace, err
 		return nil, err
 	}
 
-	for _, namespace := range namespaces {
-		ns, err := c.GetNamespace(ctx, namespace)
-		if err != nil {
-			return nil, err
-		}
+	// add mutex write for nss slice
+	mutex := sync.Mutex{}
 
-		nss = append(nss, ns)
+	// new wait group
+	wg := sync.WaitGroup{}
+	chErr := make(chan error)
+
+	nss = make([]models.Namespace, len(namespaces))
+
+	for i, namespace := range namespaces {
+		wg.Add(1)
+		go func(namespace string, index int) {
+			defer wg.Done()
+
+			ns, err := c.GetNamespace(ctx, namespace)
+			if err != nil {
+				chErr <- err
+				return
+			}
+
+			mutex.Lock()
+			nss[index] = ns
+			mutex.Unlock()
+		}(namespace, i)
 	}
+
+	go func() {
+		for err := range chErr {
+			log.Default().Printf("Failed to get namespace: %s", err)
+			return
+		}
+	}()
+
+	// wait for all goroutines to finish
+	wg.Wait()
+	close(chErr)
 
 	return nss, nil
 }

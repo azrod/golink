@@ -6,7 +6,7 @@ hide:
 # Docker deployment
 
 Run GoLink in a Docker container. This is the easiest way to get started with GoLink.
-See the [backend configuration](../configuration/backend.md) documentation and choose a storage backend.
+See the [backend configuration](../storage/index.md) documentation and choose a storage backend.
 
 This example uses Redis as storage backend.
 

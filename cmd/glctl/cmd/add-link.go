@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -25,11 +24,7 @@ var (
 			return cobra.MinimumNArgs(3)(cmd, args)
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			sdk.SetNamespace(globalFlagNamespace)
-
-			// Create a new context with timeout
-			ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-			defer cancel()
+			sdk := initSDK()
 
 			v := models.LinkRequest{
 				Name:       args[0],
@@ -38,7 +33,7 @@ var (
 				Enabled:    models.Enabled(!addCmdFlagDisable),
 			}
 
-			_, err := sdk.CreateLink(ctx, v)
+			_, err := sdk.CreateLink(cmd.Context(), v)
 			if err != nil {
 				log.Default().Printf("Failed to add link: %s", err)
 				return

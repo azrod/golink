@@ -12,8 +12,6 @@ Use Redis as the storage backend for Golink. Golink persists the data in Redis, 
 The default configuration for the Redis storage backend is:
 
 ``` yaml
-storage:
-  ... 
   redis:
     address: localhost:6379
     database: 0
