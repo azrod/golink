@@ -17,6 +17,8 @@ theme:
   # logo: images/logo.png
   font: false
 
+repo_url: https://github.com/azrod/golink
+repo_name: azrod/golink
 
 extra_css:
   - stylesheets/extra.css
@@ -32,6 +34,7 @@ nav:
       - "Getting Start": "deployment/getting-start.md"
       - "Docker": "deployment/docker.md"
       - "Docker Compose": "deployment/docker-compose.md"
+      - "Kubernetes": "deployment/kubernetes.md"
       - "Manual": "deployment/manual.md"
     - Configuration: "configuration/index.md"
     - Storage Backend:

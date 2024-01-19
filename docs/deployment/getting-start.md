@@ -7,7 +7,7 @@ hide:
 
 * [Docker](docker.md)
 * [Docker Compose](docker-compose.md)
-* Kubernetes (coming soon)
+* [Kubernetes](kubernetes.md)
 * Helm (coming soon)
 * [Manual](manual.md)
 
