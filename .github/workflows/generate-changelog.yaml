@@ -10,24 +10,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           fetch-depth: 0
           submodules: true
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
       - run: go install github.com/hashicorp/go-changelog/cmd/changelog-build@latest
-      - run: ./.ci/scripts/generate-changelog.sh
-      - run: |
-          if [[ `git status --porcelain` ]]; then
-            if ${{github.event_name == 'workflow_dispatch'}}; then
-              MSG="chore: update CHANGELOG.md (Manual Trigger)"
-            else
-              MSG="chore: update CHANGELOG.md for #${{ github.event.pull_request.number }}"
-            fi
-            git config --local user.email changelogbot@frangipane.io
-            git config --local user.name changelogbot
-            git add CHANGELOG.md
-            git commit -m "$MSG"
-            git push
-          fi
+      - run: bash .github/changelog/generate-changelog.sh
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Update CHANGELOG.md"
+          commit_options: '--no-verify --signoff'
+          file_pattern: CHANGELOG.md
+          commit_user_name: Changelog Bot
+          commit_user_email: changelog-bot@azrod.me
+          commit_author: Changelog Bot <changelog-bot@azrod.me>
+      # - run: |
+      #     if [[ `git status --porcelain` ]]; then
+      #       if ${{github.event_name == 'workflow_dispatch'}}; then
+      #         MSG="chore: update CHANGELOG.md (Manual Trigger)"
+      #       else
+      #         MSG="chore: update CHANGELOG.md for #${{ github.event.pull_request.number }}"
+      #       fi
+      #       git config --local user.email changelogbot@frangipane.io
+      #       git config --local user.name changelogbot
+      #       git add CHANGELOG.md
+      #       git commit -m "$MSG"
+      #       git push
+      #     fi
