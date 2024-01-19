@@ -1,0 +1,66 @@
+{
+    "Release Note Breaking change": {
+        "scope": "plaintext",
+        "prefix": "release-note-breaking-change",
+        "body": [
+            "```release-note:breaking-change",
+            "`server/xx` - Short Description.",
+            "`glctl/xx` - Short Description.",
+            "`api/xx` - Short Description.",
+            "`sdk/xx` - Short Description.",
+            "```"
+        ]
+    },
+    // Release note feature
+    "Release Note New Feature": {
+        "scope": "plaintext",
+        "prefix": "release-note-feature",
+        "body": [
+            "```release-note:feature",
+            "`server/xx` - Short Description.",
+            "`glctl/xx` - Short Description.",
+            "`api/xx` - Short Description.",
+            "`sdk/xx` - Short Description.",
+            "```"
+        ]
+    },
+    // Release note bug
+    "Release Note Bug": {
+        "scope": "plaintext",
+        "prefix": "release-note-bug",
+        "body": [
+            "```release-note:bug",
+            "`server/xx` - Short Description.",
+            "`glctl/xx` - Short Description.",
+            "`api/xx` - Short Description.",
+            "`sdk/xx` - Short Description.",
+            "```"
+        ]
+    },
+    // Release note Note
+    "Release Note Note": {
+        "scope": "plaintext",
+        "prefix": "release-note-note",
+        "body": [
+            "```release-note:note",
+            "`server/xx` - Short Description.",
+            "`glctl/xx` - Short Description.",
+            "`api/xx` - Short Description.",
+            "`sdk/xx` - Short Description.",
+            "```"
+        ]
+    },
+    // Release note enchancement
+    "Release Note Enhancement": {
+        "scope": "plaintext",
+        "prefix": "release-note-enhancement",
+        "body": [
+            "```release-note:enhancement",
+            "`server/xx` - Short Description.",
+            "`glctl/xx` - Short Description.",
+            "`api/xx` - Short Description.",
+            "`sdk/xx` - Short Description.",
+            "```"
+        ]
+    },
+}

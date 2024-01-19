@@ -49,6 +49,8 @@ nav:
       - "namespace": "glctl/commands/namespace.md"
       - "link": "glctl/commands/link.md"
       - "go": "glctl/commands/go.md"
+      - "version": "glctl/commands/version.md"
+      - "update": "glctl/commands/update.md"
     - "Completions":
       - "Bash": "glctl/completions/bash.md"
       - "Zsh": "glctl/completions/zsh.md"
