@@ -1,8 +1,9 @@
-name: PR Close
+name: Swagger
 on:
   pull_request:
-    types: [closed]
-  workflow_dispatch:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'api/**'
 jobs:
   GenerateSwagger:
     runs-on: ubuntu-latest
@@ -12,6 +13,7 @@ jobs:
           token: ${{ secrets.PAT }}
           fetch-depth: 0
           submodules: true
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -25,14 +27,3 @@ jobs:
           commit_user_name: Swagger Bot
           commit_user_email: swagger-bot@azrod.me
           commit_author: Swagger Bot <swagger-bot@azrod.me>
-      # * CHANGELOG
-      - run: go install github.com/hashicorp/go-changelog/cmd/changelog-build@latest
-      - run: bash .github/changelog/generate-changelog.sh
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: Update CHANGELOG.md"
-          commit_options: '--no-verify --signoff'
-          file_pattern: CHANGELOG.md
-          commit_user_name: Changelog Bot
-          commit_user_email: changelog-bot@azrod.me
-          commit_author: Changelog Bot <changelog-bot@azrod.me>

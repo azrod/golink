@@ -1,4 +1,4 @@
-name: github page
+name: Generate Documentation
 
 on:
   workflow_dispatch:
