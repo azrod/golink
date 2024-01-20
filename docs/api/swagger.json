@@ -1,8 +1,19 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a API for Golink Server.",
+        "title": "Golink API",
+        "contact": {
+            "url": "http://github.com/azrod/golink"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
     },
+    "host": "go",
+    "basePath": "/api/v1",
     "paths": {
         "/label": {
             "put": {
@@ -650,7 +661,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Namespace"
+                            "$ref": "#/definitions/models.NamespaceRequest"
                         }
                     }
                 ],
@@ -1049,7 +1060,7 @@
                 }
             }
         },
-        "/namespace/{name}/link/name/{linkName}": {
+        "/namespace/{name}/link/name/{linkname}": {
             "get": {
                 "description": "get Link by name from Namespace",
                 "produces": [
@@ -1070,7 +1081,7 @@
                     {
                         "type": "string",
                         "description": "Link Name",
-                        "name": "linkName",
+                        "name": "linkname",
                         "in": "path",
                         "required": true
                     }
@@ -1170,7 +1181,7 @@
                     {
                         "type": "string",
                         "description": "Link Name",
-                        "name": "linkName",
+                        "name": "linkname",
                         "in": "path",
                         "required": true
                     }
@@ -1817,6 +1828,44 @@
                     }
                 }
             }
+        },
+        "/version": {
+            "get": {
+                "description": "get the version of the application",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "get the version of the application",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.APIResponseError"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "$ref": "#/definitions/models.APIResponseError500"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2121,9 +2170,18 @@
                     "description": "Links is the list of links associated with the namespace",
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Link"
                     }
                 },
+                "name": {
+                    "description": "Name is the name of the namespace",
+                    "type": "string"
+                }
+            }
+        },
+        "models.NamespaceRequest": {
+            "type": "object",
+            "properties": {
                 "name": {
                     "description": "Name is the name of the namespace",
                     "type": "string"

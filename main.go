@@ -19,8 +19,6 @@ import (
 	"github.com/azrod/golink/pkg/config"
 	"github.com/azrod/golink/pkg/sb"
 	"github.com/azrod/golink/short"
-
-	_ "github.com/azrod/golink/docs/echosimple"
 )
 
 var (

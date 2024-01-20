@@ -26,6 +26,7 @@ extra_css:
 plugins:
   - search
   - mkdocs-video
+  - render_swagger
 
 nav:
   - Overview: "index.md"
@@ -56,6 +57,11 @@ nav:
       - "Zsh": "glctl/completions/zsh.md"
       - "Fish": "glctl/completions/fish.md"
       - "PowerShell": "glctl/completions/powershell.md"
+  # - glweb (Web UI): 
+  #     - "Getting Start": "glweb/index.md"
+  - glapi (API): 
+      - "Getting Start": "api/index.md"
+      - "Swagger": "api/api.md"
 
 markdown_extensions:
   # Python Markdown
