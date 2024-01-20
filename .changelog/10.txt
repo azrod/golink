@@ -1,0 +1,3 @@
+```release-note:feature
+`docs/api` - Add complete API documentation and swagger generation. 
+```
