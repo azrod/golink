@@ -1,3 +1,54 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   labels:
+#     app: golink
+#   name: golink
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: golink
+#   template:
+#     metadata:
+#       labels:
+#         app: golink
+#     spec:
+#       containers:
+#       - name: golink
+#         image: ghcr.io/azrod/golink:v0.0.18
+#         args:
+#         - --storage.type=redis
+#         - --storage.redis.address=redis.infra.svc.cluster.local:6379
+#         - --storage.redis.db=10
+#         - --app.address=0.0.0.0
+#         - --health.address=0.0.0.0
+#         - --health.port=8082
+#         env:
+#         - name: GOLINK_STORAGE_REDIS_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: dragonfly-auth
+#               key: password
+#         ports:
+#         - containerPort: 8081
+#         - name: healthcheck
+#           containerPort: 8082
+#           protocol: TCP
+#         livenessProbe:
+#           httpGet:
+#             path: /health
+#             port: healthcheck
+#           initialDelaySeconds: 3
+#           periodSeconds: 3
+#         # readinessProbe:
+#         #   httpGet:
+#         #     path: /health
+#         #     port: healthcheck
+#         #   initialDelaySeconds: 3
+#         #   periodSeconds: 3
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
