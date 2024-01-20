@@ -10,7 +10,7 @@ require (
 	github.com/labstack/gommon v0.4.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/num30/config v0.1.2
-	github.com/redis/go-redis/v9 v9.3.1
+	github.com/redis/go-redis/v9 v9.4.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	go.etcd.io/bbolt v1.3.8
