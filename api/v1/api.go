@@ -17,7 +17,8 @@ func New(db sb.Client, e *echo.Group) {
 
 	v1 := h.EchoGroup.Group("/v1")
 
-	// * Link
+	// * Version
+	v1.GET("/version", h.getVersion)
 
 	// * Label
 	v1.GET("/labels", h.listLabels)

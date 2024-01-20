@@ -15,7 +15,6 @@ func NewHandlers(db sb.Client, e *echo.Echo) *model.Handlers {
 		DB:         db,
 		EchoServer: e,
 	}
-
 	api := h.EchoServer.Group("/api")
 	api.Use(echo.MiddlewareFunc(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {

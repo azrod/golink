@@ -38,11 +38,12 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	// Create a new context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), globalTimeout())
-	defer cancel()
-
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
+		cancel()
 		os.Exit(1)
 	}
+
+	cancel()
 }
 
 var (
@@ -71,8 +72,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&globalFlagOutput, "output", "o", globalFlagOutputShort, "output format")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.golink/config.yaml)")
 
-	// Config
-
+	// * Config
 	rootCmd.PersistentFlags().BoolVar(&globalFlagDebug, "debug", false, "debug mode")
 	if err := viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug")); err != nil {
 		log.Fatal(err)
@@ -84,7 +84,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&globalFlagNamespace, "namespace", "n", "default", "namespace")
-	rootCmd.RegisterFlagCompletionFunc("namespace", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if err := rootCmd.RegisterFlagCompletionFunc("namespace", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		sdk := initSDK()
 
 		nss, err := sdk.GetNamespaces(cmd.Context())
@@ -99,7 +99,9 @@ func init() {
 		}
 
 		return names, cobra.ShellCompDirectiveNoFileComp
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 
 	if err := viper.BindPFlag("namespace", rootCmd.PersistentFlags().Lookup("namespace")); err != nil {
 		log.Fatal(err)

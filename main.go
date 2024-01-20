@@ -87,7 +87,12 @@ func main() {
 	appServer.Logger.SetLevel(globalEchoLogLevel)
 	appServer.Use(middleware.Logger())
 	appServer.Use(middleware.Recover())
-
+	appServer.Use(echo.MiddlewareFunc(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("version", version)
+			return next(c)
+		}
+	}))
 	ui := appServer.Group("/u")
 	ui.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
