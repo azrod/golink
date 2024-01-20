@@ -1,4 +1,7 @@
 ## 0.0.19 (Unreleased)
+### :rocket: **New Features**
+
+* `docs/api` - Add complete API documentation and swagger generation. (GH-10)
 
 ### :tada: **Improvements**
 
