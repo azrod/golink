@@ -1,0 +1,29 @@
+name: Swagger
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'api/**'
+jobs:
+  GenerateSwagger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
+          submodules: true
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      # * SWAGGER
+      - run: go install github.com/swaggo/swag/cmd/swag@latest
+      - run: swag init -g api/api.go --output docs/api
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Update swagger docs"
+          commit_options: '--no-verify --signoff'
+          commit_user_name: Swagger Bot
+          commit_user_email: swagger-bot@azrod.me
+          commit_author: Swagger Bot <swagger-bot@azrod.me>
