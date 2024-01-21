@@ -4,7 +4,7 @@ go 1.21.4
 
 require (
 	github.com/creativeprojects/go-selfupdate v1.1.3
-	github.com/go-resty/resty/v2 v2.10.0
+	github.com/go-resty/resty/v2 v2.11.0
 	github.com/google/uuid v1.5.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/labstack/gommon v0.4.2
