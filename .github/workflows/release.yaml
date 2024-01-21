@@ -10,8 +10,37 @@ permissions:
   packages: write
 
 jobs:
+  GolangCI-Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - run: go mod download
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+  release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # v3.5.3 
+        with:
+          fetch-depth: 0
+      - name: Generate Release Notes
+        run: |
+          export PREV_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 2 | tail -n 1)
+          export PREV_VERSION=${PREV_TAG//v}
+          sed -n -e "1{/# /d;}" -e "2{/^$/d;}" -e "/# $PREV_VERSION/q;p" CHANGELOG.md > release-notes.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.txt
+          retention-days: 1
   release-app:
     runs-on: ubuntu-latest
+    needs: [release-notes, GolangCI-Lint]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,16 +58,81 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - id: release-notes-download
+        name: Release Notes Download
+        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        with:
+          name: release-notes
+          path: /tmp
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         if: success()
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean -f .goreleaser.yaml
+          args: release --clean -f .goreleaser.yaml --release-notes=${{ steps.release-notes-download.outputs.download-path }}/release-notes.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
           event-type: update-doc
+  highest-version-tag:
+    needs: [release-app]
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.highest-version-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4 # v3.5.3 
+        with:
+          # Allow tag to be fetched when ref is a commit
+          fetch-depth: 0
+      - name: Output highest version tag
+        id: highest-version-tag
+        run: |
+          HIGHEST=$(git tag | sort -V | tail -1)
+          echo "tag=$HIGHEST" >> "$GITHUB_OUTPUT"
+  changelog-newversion:
+    needs: [release-app, highest-version-tag]
+    # write new changelog header only if release tag is the $HIGHEST i.e. exists on main
+    # and not a backport release branch (e.g. release/3.x). This results in
+    # manually updating the CHANGELOG header if releasing from the non-default branch.
+    # TODO: find a more deterministic way to determine release branch from tag commit
+    if: github.ref_name == needs.highest-version-tag.outputs.tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # v3.5.3 
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
+          ref: main
+      - name: Update Changelog Header
+        run: |
+          CHANGELOG_FILE_NAME="CHANGELOG.md"
+          PREVIOUS_RELEASE_TAG=${{ github.ref_name }}
+
+          # Add Release Date
+          RELEASE_DATE=`date +%B' '%e', '%Y`
+          sed -i -e "1 s/.*Unreleased.*/## ${PREVIOUS_RELEASE_TAG#v} ($RELEASE_DATE)/" $CHANGELOG_FILE_NAME
+
+          # Prepend next release line
+          echo Previous release is: $PREVIOUS_RELEASE_TAG
+
+          NEW_RELEASE_LINE=$(echo $PREVIOUS_RELEASE_TAG | awk -F. '{
+              $1 = substr($1,2)
+              $2 += 1
+              printf("%s.%01d.0\n\n", $1, $2);
+          }')
+
+          echo New minor version is: v$NEW_RELEASE_LINE
+
+          echo -e "## $NEW_RELEASE_LINE (Unreleased)\n$(cat $CHANGELOG_FILE_NAME)" > $CHANGELOG_FILE_NAME
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Update CHANGELOG.md after ${{ github.ref_name }}"
+          commit_options: '--no-verify --signoff'
+          file_pattern: CHANGELOG.md
+          commit_user_name: Changelog[bot]
+          commit_user_email: changelog-bot@azrod.me
+          commit_author: Changelog Bot <changelog-bot@azrod.me>
+

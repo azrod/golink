@@ -23,6 +23,6 @@ jobs:
           commit_message: "chore: Update CHANGELOG.md"
           commit_options: '--no-verify --signoff'
           file_pattern: CHANGELOG.md
-          commit_user_name: Changelog Bot
+          commit_user_name: Changelog[bot]
           commit_user_email: changelog-bot@azrod.me
           commit_author: Changelog Bot <changelog-bot@azrod.me>

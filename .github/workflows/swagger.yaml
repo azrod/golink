@@ -24,6 +24,6 @@ jobs:
         with:
           commit_message: "chore: Update swagger docs"
           commit_options: '--no-verify --signoff'
-          commit_user_name: Swagger Bot
+          commit_user_name: Swagger[bot]
           commit_user_email: swagger-bot@azrod.me
           commit_author: Swagger Bot <swagger-bot@azrod.me>

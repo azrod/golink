@@ -1,4 +1,7 @@
-## 0.0.19 (Unreleased)
+## 0.0.20 (Unreleased)
+
+## 0.0.19 (January 20, 2024)
+
 ### :rocket: **New Features**
 
 * `docs/api` - Add complete API documentation and swagger generation. (GH-10)
