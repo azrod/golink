@@ -1,0 +1,4 @@
+```release-note:feature
+`server/short` - Now return 404 HTML page when not found if webbrowser is used or return 404 JSON when CURL is used.
+```
+

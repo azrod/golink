@@ -2,7 +2,6 @@ package short
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -28,66 +27,65 @@ func NewHandlers(db sb.Client, e *echo.Echo) *Short {
 
 func (s *Short) redirectLink(c echo.Context) error {
 	path := c.Param("path")
-	// path := fmt.Sprintf("/%s", c.Param("path"))
 
 	// Split path by "/"
 	paths := strings.Split(path, "/")
 
-	var (
-		links []models.Link
-		link  models.Link
-		ns    models.Namespace
-		err   error
+	const (
+		uaTypeBrowser = iota
+		uaTypeCLI
 	)
 
-	switch {
-	case len(paths) == 1:
-		link, err = s.DB.GetLinkByPath(c.Request().Context(), "/"+path, "default")
-		if err != nil {
-			if errors.Is(err, models.ErrNotFound) {
-				// Link is not found, find if namespace exists and redirect to namespace page
-				ns, err = s.DB.GetNamespace(c.Request().Context(), paths[0])
-				if err != nil {
-					goto RETURNERROR
-				}
+	var (
+		ns     = "default"
+		target = paths[0]
 
-				return c.HTML(http.StatusTemporaryRedirect, "/u/"+ns.Name)
+		uaType = func() int {
+			ua := c.Request().UserAgent()
+
+			// Check if UserAgent is a web browser
+			switch {
+			case strings.Contains(ua, "curl") || strings.Contains(ua, "wget"):
+				return uaTypeCLI
+			default:
+				return uaTypeBrowser
 			}
-			goto RETURNERROR
-		}
-		goto REDIRECT
-	default:
-		// find link by path and namespace
-		ns, err = s.DB.GetNamespace(c.Request().Context(), paths[0])
-		if err != nil {
-			goto RETURNERROR
-		}
+		}()
+	)
 
-		links, err = s.DB.ListLinks(c.Request().Context(), ns.Name)
-		if err != nil {
-			goto RETURNERROR
-		}
+	if len(paths) != 1 {
+		ns = paths[0]
+		target = paths[1]
+	}
 
-		for _, l := range links {
-			if l.SourcePath == fmt.Sprintf("/%s", paths[1]) && l.NameSpace == ns.Name {
-				link = l
-				goto REDIRECT
-			}
-		}
-
-		err = models.ErrNotFound
+	link, err := s.DB.GetLinkByPath(c.Request().Context(), "/"+target, ns)
+	if err != nil {
 		goto RETURNERROR
 	}
 
+	goto REDIRECT
+
 RETURNERROR:
+
 	switch {
-	// TODO add html PAGE if UserAgent is a web browser and json output for other UserAgents
 	case errors.Is(err, models.ErrNotFound):
-		return c.HTML(http.StatusNotFound, "Not Found")
+		switch uaType {
+		case uaTypeBrowser:
+			return s.handleHTML404(c)
+		case uaTypeCLI:
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error": "not found",
+			})
+		}
 	case err != nil:
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 REDIRECT:
-	return c.Redirect(http.StatusTemporaryRedirect, link.TargetURL)
+	switch uaType {
+	case uaTypeCLI:
+		return c.String(http.StatusTemporaryRedirect, link.TargetURL)
+	default:
+		return c.Redirect(http.StatusTemporaryRedirect, link.TargetURL)
+	}
 }
