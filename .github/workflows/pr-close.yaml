@@ -3,8 +3,14 @@ on:
   pull_request:
     types: [closed]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.head_ref }}-changelog
+  cancel-in-progress: true
+
 jobs:
-  GenerateSwagger:
+  GenerateChangelog:
+    if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
