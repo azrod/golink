@@ -1,4 +1,13 @@
 ## 0.0.20 (Unreleased)
+### :rocket: **New Features**
+
+* `server/short` - Now return 404 HTML page when not found if webbrowser is used or return 404 JSON when CURL is used. (GH-19)
+
+### :dependabot: **Dependencies**
+
+* deps: bumps actions/cache from 3 to 4 (GH-13)
+* deps: bumps actions/setup-go from 4 to 5 (GH-14)
+* deps: bumps peter-evans/repository-dispatch from 2 to 3 (GH-22)
 
 ## 0.0.19 (January 20, 2024)
 
