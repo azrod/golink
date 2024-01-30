@@ -1,20 +1,80 @@
-name: Release
+name: TagRelease
 
 on:
-  repository_dispatch:
-    types: [release]
+  workflow_dispatch:
+    inputs:
+      tagType:
+        description: 'TagType'
+        required: true
+        default: 'pre-tag'
+        type: choice
+        options:
+        - normal
+        - pre-tag
+      tag:
+        description: 'Tag version number (Eg: v0.1.0)'
+        required: true
+        type: string
+      message:
+        description: 'Tag message'
+        required: true
 
 permissions:
   contents: write
   packages: write
 
 jobs:
-  GolangCI-Lint:
+  # * Step 0: Pre-Check
+  pre-check:
+    runs-on: ubuntu-latest
+    outputs:
+      TAG_NAME: ${{ steps.set-tag.outputs.TAG_NAME }}
+      PRERELEASE: ${{ steps.set-tag.outputs.PRERELEASE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      # ! TODO add check if tag format is valid (semver)
+      - name: Check if tag is valid
+        run : |
+          # Check if the tag start with 'v', if not, add it
+          if [[ ! ${{ github.event.inputs.tag }} =~ ^v.* ]]; then
+            echo "Error tag format is invalid. The format is vx.x.x" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+      - name: Construct Tag for Pre-Release
+        id: set-tag
+        run: |
+          # Construct the tag name
+          if [ "${{ github.event.inputs.tagType }}" == "pre-tag" ]; then
+            echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }}-alpha$(date +%Y%m%d%H%M))" >> "$GITHUB_OUTPUT"
+            echo "PRERELEASE=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "TAG_NAME=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+  # * Step 1: Check if everything is ok
+  tag-already-exist:
+    needs: [pre-check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      - name: Check if tag not already exists
+        run: |
+          if git rev-parse ${{ needs.pre-check.outputs.TAG_NAME }} >/dev/null 2>&1; then
+            echo "Tag ${{ needs.pre-check.outputs.TAG_NAME }} already exists" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+  golangci-lint:
+    needs: [pre-check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.tag }}
+          token: ${{ secrets.PAT }}
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -23,18 +83,42 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
+  # TODO add tests
+
+  # * Step 2: Create a new tag
+  tag:
+    needs: [golangci-lint, pre-check, tag-already-exist]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: rickstaa/action-create-tag@v1
+        id: "tag_create"
+        with:
+          tag: ${{ needs.pre-check.outputs.TAG_NAME }}
+          tag_exists_error: true
+          message: ${{ github.event.inputs.message }}
+  
   release-notes:
     runs-on: ubuntu-latest
+    needs: [tag, pre-check]
     steps:
       - uses: actions/checkout@v4 # v3.5.3 
         with:
           fetch-depth: 0
-          ref: ${{ github.event.client_payload.tag }}
+          ref: ${{ needs.pre-check.outputs.TAG_NAME }}
       - name: Generate Release Notes
         run: |
           export PREV_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 2 | tail -n 1)
           export PREV_VERSION=${PREV_TAG//v}
-          sed -n -e "1{/# /d;}" -e "2{/^$/d;}" -e "/# $PREV_VERSION/q;p" CHANGELOG.md > release-notes.txt
+
+          echo "" > release-notes.txt
+          if [ ${{ needs.pre-check.outputs.PRERELEASE }} == "true" ]; then
+            echo "# :construction: Prerelease" >> release-notes.txt
+          fi
+
+          sed -n -e "1{/# /d;}" -e "2{/^$/d;}" -e "/# $PREV_VERSION/q;p" CHANGELOG.md >> release-notes.txt
       - uses: actions/upload-artifact@v4
         with:
           name: release-notes
@@ -42,13 +126,13 @@ jobs:
           retention-days: 1
   release-app:
     runs-on: ubuntu-latest
-    needs: [release-notes, GolangCI-Lint]
+    needs: [release-notes, golangci-lint, pre-check]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.client_payload.tag }}
+          ref:  ${{ needs.pre-check.outputs.TAG_NAME }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Go
@@ -76,19 +160,23 @@ jobs:
           args: release --clean -f .goreleaser.yaml --release-notes=${{ steps.release-notes-download.outputs.download-path }}/release-notes.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  trigger-doc-update:
+    needs: [release-app]
+    runs-on: ubuntu-latest
+    steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
           event-type: update-doc
   highest-version-tag:
-    needs: [release-app]
+    needs: [pre-check,release-app]
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.highest-version-tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4 # v3.5.3 
         with:
-          ref: ${{ github.event.client_payload.tag }}
+          ref: ${{ needs.pre-check.outputs.TAG_NAME }}
           fetch-depth: 0
       - name: Output highest version tag
         id: highest-version-tag
@@ -96,12 +184,12 @@ jobs:
           HIGHEST=$(git tag | sort -V | tail -1)
           echo "tag=$HIGHEST" >> "$GITHUB_OUTPUT"
   changelog-newversion:
-    needs: [release-app, highest-version-tag]
+    needs: [release-app, highest-version-tag, pre-check]
     # write new changelog header only if release tag is the $HIGHEST i.e. exists on main
     # and not a backport release branch (e.g. release/3.x). This results in
     # manually updating the CHANGELOG header if releasing from the non-default branch.
     # TODO: find a more deterministic way to determine release branch from tag commit
-    if: github.ref_name == needs.highest-version-tag.outputs.tag
+    if: github.ref_name == needs.highest-version-tag.outputs.tag && needs.pre-check.outputs.PRERELEASE == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # v3.5.3 
