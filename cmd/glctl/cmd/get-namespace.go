@@ -4,11 +4,9 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"fmt"
 	"log"
-	"os"
-	"text/tabwriter"
 
+	"github.com/orange-cloudavenue/common-go/print"
 	"github.com/spf13/cobra"
 
 	"github.com/azrod/golink/models"
@@ -71,14 +69,12 @@ $> glctl get namespace [NAME] [NAME] [NAME]`,
 
 		switch globalFlagOutput {
 		case globalFlagOutputShort, globalFlagOutputWide:
-			w := tabwriter.NewWriter(os.Stdout, 10, 1, 5, ' ', 0)
-			fs := "%s\t%s\t%s\n"
-			fmt.Fprintf(w, fs, "NAME", "STATUS", "LINKS")
-
+			p := print.New()
+			p.SetHeader("NAME", "STATUS", "LINKS")
 			for _, l := range nss {
-				fmt.Fprintf(w, fs, l.Name, l.Enabled, fmt.Sprintf("%d", len(l.Links)))
+				p.AddFields(l.Name, l.Enabled, len(l.Links))
 			}
-			w.Flush()
+			p.PrintTable()
 		}
 	},
 }

@@ -6,7 +6,7 @@ on:
       - '**.go'
 jobs:
   GolangCI-Lint:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5

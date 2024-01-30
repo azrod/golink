@@ -22,8 +22,6 @@ var commit = "none"
 // date that can be overwritten by a release process.
 var date = "unknown"
 
-var sdk *golink.Client
-
 var apiURL = "http://localhost:8081"
 
 // rootCmd represents the base command when called without any subcommands.
@@ -58,6 +56,8 @@ var (
 const (
 	globalFlagOutputShort = "short"
 	globalFlagOutputWide  = "wide"
+
+	dirName = ".golink"
 )
 
 var (
@@ -140,13 +140,13 @@ func initConfig() {
 		}
 
 		// Search config in $HOME/.golink
-		viper.AddConfigPath(home + "/.golink")
+		viper.AddConfigPath(home + "/" + dirName)
 		viper.SetConfigName("config")
 
 		// Check if directory exists.
-		if _, err := os.Stat(home + "/.golink"); os.IsNotExist(err) {
-			if err := os.MkdirAll(home+"/.golink", 0o755); err != nil {
-				log.Printf("Can't create config directory(dir:%s): %s", home+"/.golink", err)
+		if _, err := os.Stat(home + "/" + dirName); os.IsNotExist(err) {
+			if err := os.MkdirAll(home+"/"+dirName, 0o755); err != nil {
+				log.Printf("Can't create config directory(dir:%s): %s", home+"/"+dirName, err)
 				os.Exit(1)
 			}
 		}

@@ -4,11 +4,9 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package glctl
 
 import (
-	"fmt"
 	"log"
-	"os"
-	"text/tabwriter"
 
+	"github.com/orange-cloudavenue/common-go/print"
 	"github.com/spf13/cobra"
 
 	"github.com/azrod/golink/models"
@@ -69,29 +67,26 @@ var getLinkCmd = &cobra.Command{
 			}
 		}
 
+		p := print.New()
+		defer p.PrintTable()
+
 		switch globalFlagOutput {
 		case globalFlagOutputShort:
-			w := tabwriter.NewWriter(os.Stdout, 10, 1, 5, ' ', 0)
-			fs := "%s\t%s\t%s\t%s\t%s\n"
-			fmt.Fprintf(w, fs, "NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS")
+			p.SetHeader("NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS")
 
 			for _, l := range links {
 				if len(l.TargetURL) > 50 {
 					l.TargetURL = l.TargetURL[:50] + "..."
 				}
-				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String())
+				p.AddFields(globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled)
 			}
-			w.Flush()
 
 		case globalFlagOutputWide:
-			w := tabwriter.NewWriter(os.Stdout, 10, 1, 5, ' ', 0)
-			fs := "%s\t%s\t%s\t%s\t%s\t%s\n"
-			fmt.Fprintf(w, fs, "NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS", "LABELS")
+			p.SetHeader("NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS", "LABELS")
 
 			for _, l := range links {
-				fmt.Fprintf(w, fs, globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled.String(), l.Labels)
+				p.AddFields(globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled, l.Labels)
 			}
-			w.Flush()
 		}
 	},
 }
