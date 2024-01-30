@@ -1,0 +1,51 @@
+name: Tag
+on:
+  workflow_dispatch:
+    inputs:
+        tagType:
+          description: 'TagType'
+          required: true
+          default: 'pre-tag'
+          type: choice
+          options:
+          - normal
+          - pre-tag
+        tag:
+          description: 'Tag version number (Eg: v0.1.0)'
+          required: true
+          type: string
+        message:
+          description: 'Tag message'
+          required: true
+
+jobs:
+  pre-tag:
+    runs-on: ubuntu-latest
+    env:
+        TAG_NAME: ${{ github.event.inputs.tag }}
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            token: ${{ secrets.PAT }}
+        - run: |
+            # Construct the tag name
+            if [ "${{ github.event.inputs.tagType }}" == "pre-tag" ]; then
+              echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }}-alpha.$(date +%Y%m%d%H%M))" >> "$GITHUB_ENV"
+            else
+              echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }})" >> "$GITHUB_ENV"
+            fi
+            # Check if the tag start with 'v', if not, add it
+            if [[ ! $TAG_NAME =~ ^v.* ]]; then
+              echo "TAG_NAME=v$TAG_NAME" >> "$GITHUB_ENV"
+            fi
+            # Check if the tag not already exists
+            if git rev-parse $TAG_NAME >/dev/null 2>&1; then
+              echo "Tag $TAG_NAME already exists" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+        - uses: rickstaa/action-create-tag@v1
+          id: "tag_create"
+          with:
+            tag: ${{ env.TAG_NAME }}
+            tag_exists_error: true
+            message: ${{ github.event.inputs.message }}
