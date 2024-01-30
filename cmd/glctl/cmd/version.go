@@ -1,11 +1,7 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package glctl
 
 import (
-	"log"
-
+	"github.com/orange-cloudavenue/common-go/print"
 	"github.com/spf13/cobra"
 )
 
@@ -21,17 +17,13 @@ var versionCmd = &cobra.Command{
 		// Ignore errors, we don't care if the server is not reachable
 		vServer, _ := sdk.GetVersion(cmd.Context())
 
-		log.Printf(`Client informations:
-  Version: %s
-  Commit: %s
-  Build Date: %s`,
-			version, commit, date)
+		p := print.New()
+		defer p.PrintTable()
+		p.SetHeader("Type", "Version", "Commit", "Build Date")
+		p.AddFields("Client", version, commit, date)
 
 		if vServer != "" {
-			log.Printf(`
-Server informations:
-  Version: %s
-`, vServer)
+			p.AddFields("Server", vServer, "", "")
 		}
 	},
 }
