@@ -18,8 +18,11 @@ on:
           description: 'Tag message'
           required: true
 
+permissions:
+  contents: write
+
 jobs:
-  pre-tag:
+  tag:
     runs-on: ubuntu-latest
     env:
         TAG_NAME: ${{ github.event.inputs.tag }}
@@ -30,7 +33,7 @@ jobs:
         - run: |
             # Construct the tag name
             if [ "${{ github.event.inputs.tagType }}" == "pre-tag" ]; then
-              echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }}-alpha.$(date +%Y%m%d%H%M))" >> "$GITHUB_ENV"
+              echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }}-alpha+$(date +%Y%m%d%H%M))" >> "$GITHUB_ENV"
             else
               echo "TAG_NAME=$(echo ${{ github.event.inputs.tag }})" >> "$GITHUB_ENV"
             fi
@@ -49,3 +52,15 @@ jobs:
             tag: ${{ env.TAG_NAME }}
             tag_exists_error: true
             message: ${{ github.event.inputs.message }}
+        - name: Repository Dispatch Release
+          if: ${{ github.event.inputs.tagType == 'normal' }}
+          uses: peter-evans/repository-dispatch@v3
+          with:
+            event-type: release
+            client-payload: '{"tag": "${{ env.TAG_NAME }}"}'
+        - name: Repository Dispatch Pre-Release
+          if: ${{ github.event.inputs.tagType == 'pre-tag' }}
+          uses: peter-evans/repository-dispatch@v3
+          with:
+            event-type: prerelease
+            client-payload: '{"tag": "${{ env.TAG_NAME }}"}'

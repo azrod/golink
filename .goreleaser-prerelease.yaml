@@ -5,10 +5,6 @@ before:
     # You may remove this if you don't use go modules.
     - go mod tidy
 
-release:
-  prerelease: auto
-
-
 snapshot:
   name_template: "{{ .Tag }}"
 
@@ -128,3 +124,6 @@ archives:
     files:
       - LICENSE
       - ./cmd/glctl/README.md
+
+release:
+  prerelease: true
