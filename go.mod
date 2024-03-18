@@ -4,12 +4,13 @@ go 1.21.4
 
 require (
 	github.com/creativeprojects/go-selfupdate v1.1.3
-	github.com/go-resty/resty/v2 v2.10.0
+	github.com/go-resty/resty/v2 v2.12.0
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/labstack/gommon v0.4.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/num30/config v0.1.2
+	github.com/orange-cloudavenue/common-go/print v0.0.0-20240129085602-f04f55fc74ff
 	github.com/redis/go-redis/v9 v9.3.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
@@ -44,7 +45,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/orange-cloudavenue/common-go/print v0.0.0-20240129085602-f04f55fc74ff // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
@@ -60,11 +60,11 @@ require (
 	github.com/xanzy/go-gitlab v0.95.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/oauth2 v0.15.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
