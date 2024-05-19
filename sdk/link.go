@@ -70,6 +70,24 @@ func (c Client) GetLinks(ctx context.Context) (links []models.Link, err error) {
 	return r.Result().(*models.APIResponse[[]models.Link]).Data, nil
 }
 
+// GetLinksAllNamespace gets a list of links from all namespaces.
+func (c Client) GetLinksAllNamespace(ctx context.Context) (links []models.Link, err error) {
+	r, err := c.c.R().
+		SetContext(ctx).
+		SetResult(models.APIResponse[[]models.Link]{}).
+		SetError(models.APIResponseError[models.APIResponseError400]{}).
+		Get("/namespaces/links")
+	if err != nil {
+		return []models.Link{}, err
+	}
+
+	if r.IsError() {
+		return []models.Link{}, errors.New(r.Error().(*models.APIResponseError[models.APIResponseError400]).Error.Message)
+	}
+
+	return r.Result().(*models.APIResponse[[]models.Link]).Data, nil
+}
+
 // UpdateLink updates a link in the database.
 func (c Client) UpdateLink(ctx context.Context, link models.LinkRequest, linkID string) error {
 	r, err := c.c.R().

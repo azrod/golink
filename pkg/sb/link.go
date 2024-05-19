@@ -158,3 +158,51 @@ func (c Client) ListLinks(ctx context.Context, namespace string) ([]models.Link,
 
 	return links, nil
 }
+
+// ListAllLinks lists all links in the database.
+func (c Client) ListAllLinks(ctx context.Context) ([]models.Link, error) {
+	// List all namespaces and for each namespace list all links
+	nss, err := c.ListNamespaces(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// add mutex write for nss slice
+	mutex := sync.Mutex{}
+
+	// new wait group
+	wg := sync.WaitGroup{}
+	chErr := make(chan error)
+
+	links := make([]models.Link, 0)
+
+	for _, ns := range nss {
+		wg.Add(1)
+		go func(ns string) {
+			defer wg.Done()
+
+			ls, err := c.ListLinks(ctx, ns)
+			if err != nil {
+				chErr <- err
+				return
+			}
+
+			mutex.Lock()
+			links = append(links, ls...)
+			mutex.Unlock()
+		}(ns.Name)
+	}
+
+	go func() {
+		for err := range chErr {
+			log.Default().Printf("Failed to get namespace: %s", err)
+			return
+		}
+	}()
+
+	// wait for all goroutines to finish
+	wg.Wait()
+	close(chErr)
+
+	return links, nil
+}

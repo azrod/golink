@@ -12,13 +12,15 @@ import (
 	"github.com/azrod/golink/models"
 )
 
+var getLinkCmdFlagAllNameSpaces bool
+
 // linkCmd represents the link command.
 var getLinkCmd = &cobra.Command{
 	Use:     "link",
 	Aliases: []string{"li"},
 	Short:   "Get links",
 	Long:    `Return a list of links or a single link by name or ID.`,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ValidArgsFunction: func(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		sdk := initSDK()
 		links, err := sdk.GetLinks(cmd.Context())
 		if err != nil {
@@ -40,30 +42,38 @@ var getLinkCmd = &cobra.Command{
 			err   error
 		)
 
-		if len(args) > 0 {
-			for _, arg := range args {
-				var (
-					link models.Link
-					err  error
-				)
-				// Arg is not an ID, try to find the link by name
-				if models.IsValidUUID(arg) {
-					link, err = sdk.GetLinkByID(cmd.Context(), models.LinkID(arg))
-				} else {
-					link, err = sdk.GetLinkByName(cmd.Context(), arg)
-				}
-				if err != nil {
-					log.Default().Printf("Failed to get link: %s", err)
-					return
-				}
-
-				links = append(links, link)
-			}
-		} else {
-			links, err = sdk.GetLinks(cmd.Context())
+		if getLinkCmdFlagAllNameSpaces {
+			links, err = sdk.GetLinksAllNamespace(cmd.Context())
 			if err != nil {
 				log.Default().Printf("Failed to get links: %s", err)
 				return
+			}
+		} else {
+			if len(args) > 0 {
+				for _, arg := range args {
+					var (
+						link models.Link
+						err  error
+					)
+					// Arg is not an ID, try to find the link by name
+					if models.IsValidUUID(arg) {
+						link, err = sdk.GetLinkByID(cmd.Context(), models.LinkID(arg))
+					} else {
+						link, err = sdk.GetLinkByName(cmd.Context(), arg)
+					}
+					if err != nil {
+						log.Default().Printf("Failed to get link: %s", err)
+						return
+					}
+
+					links = append(links, link)
+				}
+			} else {
+				links, err = sdk.GetLinks(cmd.Context())
+				if err != nil {
+					log.Default().Printf("Failed to get links: %s", err)
+					return
+				}
 			}
 		}
 
@@ -78,14 +88,14 @@ var getLinkCmd = &cobra.Command{
 				if len(l.TargetURL) > 50 {
 					l.TargetURL = l.TargetURL[:50] + "..."
 				}
-				p.AddFields(globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled)
+				p.AddFields(l.NameSpace, l.Name, l.SourcePath, l.TargetURL, l.Enabled)
 			}
 
 		case globalFlagOutputWide:
 			p.SetHeader("NAMESPACE", "NAME", "PATH", "TARGET URL", "STATUS", "LABELS")
 
 			for _, l := range links {
-				p.AddFields(globalFlagNamespace, l.Name, l.SourcePath, l.TargetURL, l.Enabled, l.Labels)
+				p.AddFields(l.NameSpace, l.Name, l.SourcePath, l.TargetURL, l.Enabled, l.Labels)
 			}
 		}
 	},
@@ -93,4 +103,5 @@ var getLinkCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getLinkCmd)
+	getCmd.PersistentFlags().BoolVarP(&getLinkCmdFlagAllNameSpaces, "all-namespaces", "A", false, "all namespaces")
 }

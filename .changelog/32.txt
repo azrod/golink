@@ -1,0 +1,11 @@
+```release-note:feature
+`glctl` - Add new flag `-A` or `--all-namespaces` in command `get link` to get links from all namespaces.
+```
+
+```release-note:feature
+`api` - Add new endpoint `/namespaces/links` to get links from all namespaces.
+```
+
+```release-note:feature
+`sdk` - Add new method `GetLinksAllNamespace` to get links from all namespaces.
+```
