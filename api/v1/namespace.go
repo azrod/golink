@@ -242,6 +242,57 @@ func (h *v1) deleteNamespace(c echo.Context) error {
 	))
 }
 
+// listAllLinks
+// @Summary List all Links from all Namespaces
+// @Description get all Links from all Namespaces
+// @Tags namespaces
+// @Produce  json
+// @Success 200 {array} models.APIResponse{data=[]models.Link}
+// @failure 500 {object} models.APIResponseError{error=models.APIResponseError500}
+// @failure 404 {object} models.APIResponseError{error=models.APIResponseError404}
+// @failure 400 {object} models.APIResponseError{error=models.APIResponseError400}
+// @Router /namespaces/links [get].
+func (h *v1) listAllLinks(c echo.Context) error {
+	links, err := h.DB.ListAllLinks(c.Request().Context())
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNotFound):
+			return c.JSON(http.StatusNotFound, model.NewAPIResponseError(
+				c,
+				"namespaces.links.all",
+				models.APIResponseError404{
+					Code:    http.StatusNotFound,
+					Message: err.Error(),
+				},
+			))
+		case errors.Is(err, models.ErrInvalid):
+			return c.JSON(http.StatusBadRequest, model.NewAPIResponseError(
+				c,
+				"namespaces.links.all",
+				models.APIResponseError400{
+					Code:    http.StatusBadRequest,
+					Message: err.Error(),
+				},
+			))
+		default:
+			return c.JSON(http.StatusInternalServerError, model.NewAPIResponseError(
+				c,
+				"namespaces.links.all",
+				models.APIResponseError500{
+					Code:    http.StatusInternalServerError,
+					Message: err.Error(),
+				},
+			))
+		}
+	}
+
+	return c.JSON(http.StatusOK, model.NewAPIResponse[[]models.Link](
+		c,
+		"namespace.links.all",
+		links,
+	))
+}
+
 // listLinksByNamespace
 // @Summary List all Links by Namespace
 // @Description get all Links by Namespace

@@ -83,8 +83,9 @@ func init() {
 		log.Fatal(err)
 	}
 
+	// * Namespace
 	rootCmd.PersistentFlags().StringVarP(&globalFlagNamespace, "namespace", "n", "default", "namespace")
-	if err := rootCmd.RegisterFlagCompletionFunc("namespace", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if err := rootCmd.RegisterFlagCompletionFunc("namespace", func(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		sdk := initSDK()
 
 		nss, err := sdk.GetNamespaces(cmd.Context())
@@ -107,6 +108,7 @@ func init() {
 		log.Fatal(err)
 	}
 
+	// * Host
 	rootCmd.PersistentFlags().StringVar(&cfgHost, "host", apiURL, "golink host")
 	if err := viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host")); err != nil {
 		log.Fatal(err)

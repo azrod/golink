@@ -16,7 +16,7 @@ var updateCmd = &cobra.Command{
 	GroupID: "other",
 	Short:   "Check for updates and update the application",
 	Long:    `Check if a new version is available and update the application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		if version == "dev" {
 			log.Printf("Cannot update a development version")
 			return

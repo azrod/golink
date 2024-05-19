@@ -32,6 +32,7 @@ func New(db sb.Client, e *echo.Group) {
 
 	// * Namespace
 	v1.GET("/namespaces", h.listNamespaces)
+	v1.GET("/namespaces/links", h.listAllLinks)
 	v1.GET("/namespace/:name", h.getNamespace)
 	v1.GET("/namespace/:name/links", h.listLinksByNamespace)
 	v1.GET("/namespace/:name/link/:linkid", h.getLinkFromNamespace)

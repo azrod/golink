@@ -23,7 +23,7 @@ $> glctl go [NAMESPACE/LINKNAME]
 	Args: func(cmd *cobra.Command, args []string) error {
 		return cobra.ExactArgs(1)(cmd, args)
 	},
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ValidArgsFunction: func(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		sdk := initSDK()
 		nss, err := sdk.GetNamespaces(cmd.Context())
 		if err != nil {
