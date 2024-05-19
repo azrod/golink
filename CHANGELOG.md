@@ -1,12 +1,21 @@
 ## 0.0.20 (Unreleased)
 ### :rocket: **New Features**
 
+* `api` - Add new endpoint `/namespaces/links` to get links from all namespaces. (GH-32)
+* `glctl` - Add new flag `-A` or `--all-namespaces` in command `get link` to get links from all namespaces. (GH-32)
+* `sdk` - Add new method `GetLinksAllNamespace` to get links from all namespaces. (GH-32)
 * `server/short` - Now return 404 HTML page when not found if webbrowser is used or return 404 JSON when CURL is used. (GH-19)
 
 ### :dependabot: **Dependencies**
 
 * deps: bumps actions/cache from 3 to 4 (GH-13)
+* deps: bumps actions/download-artifact from 4.1.1 to 4.1.7 (GH-35)
 * deps: bumps actions/setup-go from 4 to 5 (GH-14)
+* deps: bumps dependabot/fetch-metadata from 1.6.0 to 2.1.0 (GH-36)
+* deps: bumps github.com/creativeprojects/go-selfupdate from 1.1.3 to 1.2.0 (GH-37)
+* deps: bumps github.com/google/uuid from 1.5.0 to 1.6.0 (GH-21)
+* deps: bumps go.etcd.io/bbolt from 1.3.8 to 1.3.10 (GH-38)
+* deps: bumps golangci/golangci-lint-action from 3 to 6 (GH-34)
 * deps: bumps peter-evans/repository-dispatch from 2 to 3 (GH-22)
 
 ## 0.0.19 (January 20, 2024)
