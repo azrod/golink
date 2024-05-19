@@ -17,7 +17,8 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           fetch-depth: 0
-          submodules: true
+          submodules: false
+          ref: main
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -28,7 +29,8 @@ jobs:
         with:
           commit_message: "chore: Update CHANGELOG.md"
           commit_options: '--no-verify --signoff'
+          push_options: '--force'
           file_pattern: CHANGELOG.md
-          commit_user_name: Changelog[bot]
-          commit_user_email: changelog-bot@azrod.me
-          commit_author: Changelog Bot <changelog-bot@azrod.me>
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
+          commit_author: Changelog Bot <github-actions[bot]@users.noreply.github.com>
