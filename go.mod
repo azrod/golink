@@ -15,7 +15,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/swaggo/swag v1.16.3
-	go.etcd.io/bbolt v1.3.8
+	go.etcd.io/bbolt v1.3.10
 )
 
 require (
