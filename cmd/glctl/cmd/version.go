@@ -11,7 +11,7 @@ var versionCmd = &cobra.Command{
 	GroupID: "other",
 	Short:   "Returns the version of the application",
 	Long:    `Returns the version, commit hash and build date of the application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		sdk := initSDK()
 
 		// Ignore errors, we don't care if the server is not reachable
