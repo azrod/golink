@@ -1,0 +1,146 @@
+[data-md-color-scheme="custom"] {
+    --md-primary-bg-color: rgb(203, 166, 247);
+    --md-primary-fg-color: rgb(24, 24, 37);
+    --md-default-fg-color--light: rgb(203, 166, 247);
+
+    /* Code Block */
+    --md-code-hl-constant-color: rgb(245, 224, 220);
+    --md-code-hl-variable-color: rgb(245, 194, 231);
+    --md-code-hl-operator-color: rgb(137, 220, 235);
+    --md-code-hl-keyword-color: rgb(137, 220, 235);
+    --md-code-hl-string-color: rgb(166, 227, 161);
+}
+
+:root {
+    --md-typeset-color: rgb(245, 224, 220);
+    --md-typeset-a-color: rgb(137, 220, 235);
+
+    --md-primary-fg-color: rgb(24, 24, 37);
+
+    --md-footer-bg-color: rgb(24, 24, 37);
+    --md-footer-fg-color: rgb(24, 24, 37);
+
+    --md-default-fg-color: rgb(166, 227, 161);
+    --md-default-bg-color: rgb(30, 30, 46);
+
+    --md-admonition-bg-color: rgb(30, 30, 46);
+    --md-admonition-fg-color: rgb(245, 224, 220);
+
+    --md-code-bg-color: rgb(49, 50, 68);
+    --md-code-fg-color: rgb(137, 220, 235);
+    --md-code-hl-punctuation-color: rgb(137, 220, 235);
+
+    --md-default-fg-color--lightest: rgb(250, 179, 135);
+    --md-accent-fg-color: rgb(243, 139, 168);
+}
+
+.md-header__button.md-logo {
+    margin: 0.1rem;
+    padding: 0.2rem;
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+    height: 2rem;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+    border-color: rgb(245, 224, 220);
+    font-size: .8rem;
+}
+
+.md-dialog__inner {
+    color: rgb(245, 224, 220);
+}
+
+.terraform {
+    color: rgb(92, 78, 229);
+}
+
+/* Swagger */
+
+.swagger-ui a.nostyle span,
+.swagger-ui a.nostyle:visited span,
+.swagger-ui button.opblock-summary-control>div>div.opblock-summary-description,
+.swagger-ui .opblock-description .markdown p {
+    color: rgb(245, 224, 220);
+}
+
+.swagger-ui button.opblock-control-arrow svg {
+    fill: rgb(137, 220, 235);
+}
+
+.swagger-ui .opblock-section div.opblock-section-header,
+.swagger-ui .opblock-section div.opblock-section-header .opblock-title,
+.swagger-ui .responses-wrapper div.opblock-section-header,
+.swagger-ui .responses-wrapper div.opblock-section-header h4,
+.swagger-ui .responses-wrapper div.opblock-section-header span {
+    background: rgb(24, 24, 37);
+    color: rgb(245, 224, 220);
+}
+
+.swagger-ui .opblock-section div.opblock-section-header .try-out__btn {
+    color: rgb(245, 224, 220);
+    border-color: rgb(203, 166, 247);
+}
+
+.swagger-ui .table-container table tbody *,
+.swagger-ui .table-container table thead *,
+.swagger-ui .responses-wrapper table tbody *,
+.swagger-ui .responses-wrapper table thead * {
+    color: rgb(245, 224, 220);
+}
+
+.swagger-ui div.info {
+    background: rgb(24, 24, 37);
+    border-color: rgb(203, 166, 247);
+    border-width: 0.2rem;
+    border-radius: 0.5rem;
+    border-style: solid;
+}
+
+.swagger-ui div.info hgroup.main,
+.swagger-ui div.info * {
+    margin: 20px;
+}
+
+
+.swagger-ui .info hgroup.main *,
+.swagger-ui .info .description p {
+    color: rgb(245, 224, 220);
+}
+
+.swagger-ui .models,
+.swagger-ui .models * {
+    background: rgb(24, 24, 37);
+    color: rgb(245, 224, 220);
+    fill: rgb(245, 224, 220);
+}
+
+.swagger-ui .models .model-title,
+.swagger-ui .model-toggle:after,
+.swagger-ui .model span.property.primitive {
+    color: rgb(250, 179, 135);
+    fill: rgb(250, 179, 135);
+}
+
+.swagger-ui .model span.prop-type {
+    color: rgb(137, 220, 235);
+}
+
+
+.swagger-ui .execute-wrapper button.execute {
+    background: rgb(203, 166, 247);
+    color: rgb(24, 24, 37);
+    border-color: rgb(203, 166, 247);
+}
+
+
+.swagger-ui textarea.body-param__text,
+.swagger-ui .table-container input[type=text],
+.swagger-ui select.content-type {
+    background: rgb(24, 24, 37);
+    background-color: rgb(24, 24, 37);
+    color: rgb(245, 224, 220);
+}
