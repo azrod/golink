@@ -1,5 +1,16 @@
 ## 0.2.0 (Unreleased)
 
+### :dependabot: **Dependencies**
+
+* deps: bumps actions/download-artifact from 4.1.7 to 4.1.8 (GH-47)
+* deps: bumps dependabot/fetch-metadata from 2.1.0 to 2.2.0 (GH-46)
+* deps: bumps github.com/creativeprojects/go-selfupdate from 1.2.0 to 1.4.0 (GH-49)
+* deps: bumps github.com/go-resty/resty/v2 from 2.13.1 to 2.15.3 (GH-50)
+* deps: bumps github.com/redis/go-redis/v9 from 9.5.1 to 9.7.0 (GH-51)
+* deps: bumps github.com/spf13/cobra from 1.8.0 to 1.8.1 (GH-44)
+* deps: bumps github.com/spf13/viper from 1.18.2 to 1.19.0 (GH-41)
+* deps: bumps goreleaser/goreleaser-action from 5 to 6 (GH-43)
+
 ## 0.1.0 (May 20, 2024)
 
 ### :rocket: **New Features**
