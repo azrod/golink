@@ -1,4 +1,7 @@
-## 0.0.20 (Unreleased)
+## 0.2.0 (Unreleased)
+
+## 0.1.0 (May 20, 2024)
+
 ### :rocket: **New Features**
 
 * `api` - Add new endpoint `/namespaces/links` to get links from all namespaces. (GH-32)
