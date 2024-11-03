@@ -10,7 +10,7 @@ release:
 
 
 snapshot:
-  name_template: "{{ .Tag }}"
+  version_template: "{{ .Tag }}"
 
 checksum:
   name_template: '{{ .ProjectName }}-{{ .Version }}-checksums.txt'
