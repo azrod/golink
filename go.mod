@@ -1,6 +1,7 @@
 module github.com/azrod/golink
 
 go 1.21.6
+toolchain go1.22.5
 
 require (
 	github.com/creativeprojects/go-selfupdate v1.4.0
@@ -15,7 +16,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/swaggo/swag v1.16.3
-	go.etcd.io/bbolt v1.3.10
+	go.etcd.io/bbolt v1.3.11
 )
 
 require (
