@@ -5,7 +5,7 @@ toolchain go1.22.5
 
 require (
 	github.com/creativeprojects/go-selfupdate v1.4.0
-	github.com/go-resty/resty/v2 v2.16.0
+	github.com/go-resty/resty/v2 v2.16.1
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/labstack/gommon v0.4.2
